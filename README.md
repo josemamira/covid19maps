@@ -3,7 +3,7 @@
 Interactive maps make with COVID-19 data
 
 Screenshot:
-![alt text](https://github.com/josemamira/covid19maps/blob/master/doc/portada.png "Covid-19 interactive maps")
+![alt text](https://github.com/josemamira/covid19maps/blob/master/src/img/portada.png "Covid-19 interactive maps")
 
 covid19maps
 =============
