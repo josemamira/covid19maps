@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--<link rel="stylesheet" type="text/css" href="css/font-awesome-4.7.0/css/font-awesome.min.css" media="print">-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>COVID-19 interactive maps by josemamira</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>COVID-19 interactive maps</h1>
+        <h2></h2>
+        <a href="https://github.com/josemamira/covid19maps" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true">
+  <span aria-hidden="true" class="octicon octicon-link"></span></a>Bienvenido a COVID-19 interactive maps.</h3>
+
+<p><img src="src/img/portada.png" width="80%"></p>
+
+<p>Dada la situación mundial en que nos encontramos (abril 2020), donde la población está confinada en sus viviendas (caso de España) he querido aprovechar 
+el tiempo disponible para investigar sobre las posibilidades que ofrece la cartografía para ofrecer la información de una forma más atractiva que las frías tablas de cifras.</p>
+<p>El punto de partida de este proyecto era y es ofrecer a los desarrolladores la capacidad de mostrar cartografía en sus respectivos portales de una manera fácil y desatendida. Por ello la cartografía debía de cumplir los siguientes requerimientos:</p>
+<ul>
+	<li>Utilizar una API de mapas 100 % libre. En este sentido he optado por utilizar Leaflet como motor para publicar los mapas</li>
+	<li>El resto de librerías Javascript utilizadas son también de dominio público, y muy extendido su uso por los desarrolladores. Principalmente he utilizado: D3 y JQuery. La única librería que es realmente de geoprocesamiento espacial es la excelente librería Turf.js</li>
+	<li>Los datos geográficos deberán estar en un formato también libre y extendido en el mundo de la geomática. En este sentido se ha optado por el 
+	formato "GeoJSON". He utilizado 2 conjunto de datos muy simplificados, con pocos vértices, para que su carga sea rápida </li>
+	<li>Los datos estadísticos proceden de fuente públicas y abiertas, y están disponibles en formato CSV. 
+	En ningún momento he descargado los datos para tratarlos. Estos se conectan por AJAX desde sus respectivos servidores, realizando online una unión entre columnas (JOIN en terminología GIS). 
+	La actualización de los datos es por tanto la de estas fuentes. Hasta ahora (18 de abril 2020) ésta es diaria. 
+	Las fuentes que he utilizado son:
+		<ul>
+			<li><a href="https://github.com/datadista/datasets/tree/master/COVID%2019">Datadista</a></li>
+			<li><a href="https://github.com/CSSEGISandData">CSSE at Johns Hopkins University</a></li>
+		</ul>
+	</li>	
+</ul>
+
+          
+          
+<h2>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true">
+  <span aria-hidden="true" class="octicon octicon-link"></span></a>Casos de estudio</h2>
+
+<h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true">
+  <span aria-hidden="true" class="octicon octicon-link"></span></a>Generación al vuelo de un GeoJSON a partir de un CSV con coordenadas</h3>
+
+<p>Este ejemplo no contiene cartografía, pero muestra las capacidades para generar "al vuelo" un GeoJSON con todos los datos.</p>
+<p>Si deseas ver el resultado puedes copiar el resultado al portapapeles y visualizarlo en el visor <a href="http://geojson.io/">http://geojson.io</a></p>
+<p>Un aspecto a destacar en el código es el tratamiento de los datos de origen.</p>
+<img src="src/img/geojsoncsv.png">
+<a href="src/demo1_create_geojson_from_csv.html" target="_blank"><button type="button" >demo <i class="fa fa-cogs fa-2" aria-hidden="true"></i></button></a> 
+| 
+<a href="https://github.com/josemamira/covid19maps/blob/master/src/demo1_create_geojson_from_csv.html" target="_blank"><button type="button" >código <i class="fa fa-github fa-2" aria-hidden="true"></i></button></a>
+
+
+
+
+
+
+<h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true">
+  <span aria-hidden="true" class="octicon octicon-link"></span></a>Unión de dos ficheros CSV (al vuelo) y generación de tabla HTML</h3>
+
+<p>Este ejemplo tampoco contiene cartografía, pero muestra las capacidades para realizar una unión de dos tablas (CSV)
+ que tienen en común el contenido de una columna (que no es lo mismo que el nombre de la columna). 
+ Por ejemplo tenemos una tabla con un listado de unidades administrativas (por ejemplo municipios), con una columna con su código -en el caso de España es el código INE -. 
+ Esta tabla se une con otra que también tiene una columna con ese código.</p>
+ <img src="src/img/table.png">
+<a href="src/demo2_join_csv.html" target="_blank"><button type="button" >demo <i class="fa fa-cogs fa-2" aria-hidden="true"></i></button></a> 
+| 
+<a href="https://github.com/josemamira/covid19maps/blob/master/src/demo2_join_csv.html" target="_blank"><button type="button" >código <i class="fa fa-github fa-2" aria-hidden="true"></i></button></a>
+
+
+
+<h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true">
+  <span aria-hidden="true" class="octicon octicon-link"></span></a>Mapa de densidad de puntos (density map)</h3>
+
+<p>Este tipo de mapas ya no suelen ser muy habituales pero hay que reconocer que unido a su simpleza está la capacidad de comunicar claramente 
+un fenómeno. Muchos hemos visto el típico mapa de cabezas de ganado, donde un punto representa una determinada cantidad de cabezas. 
+Pues este ejemplo llevado al caso del COVID-19 nos da una idea de como un mismo dato (casos) cambia su interpretación en función del número de elementos que identifican a un punto.
+</p>
+<p>Veamos un ejemplo de España, para valores de 200, 1000 y 5000 casos por punto.</p>
+<p><img src="src/img/dotmap_spain.png"></p>
+<p>Esta web dispone de un control deslizador (slider) para seleccionar el número de casos por cada punto. Está en la parte inferior izquierda.</p>
+<p><img src="src/img/slider.png"></p>
+<p>Para realizar esta web he utilizado la excelente librería <a href="https://turfjs.org/">TurfJS</a></p>
+<a href="src/demo3_dotmap.html" target="_blank"><button type="button" >demo <i class="fa fa-cogs fa-2" aria-hidden="true"></i></button></a> 
+| 
+<a href="https://github.com/josemamira/covid19maps/blob/master/src/demo3_dotmap.html" target="_blank"><button type="button" >código <i class="fa fa-github fa-2" aria-hidden="true"></i></button></a>
+
+
+<h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true">
+  <span aria-hidden="true" class="octicon octicon-link"></span></a>Mapa coroplético de una fecha elegida por el usuario</h3>
+  <p><img src="src/img/coropletico_world.png" width="400"></p>
+  <p>La idea que me inspiró para hacer este mapa es de nuevo la unión de ficheros, en este caso un CSV con los casos del COVID-19 con una GeoJSON de polígonos con los países. Quise aprovechar que en el fichero CSV 
+  estaban recogidos todos los casos por países desde el inicio de los registros (22 de enero) hasta la actualidad, para añadir un combo desplegable 
+  con las fechas para que el usuario puede ver la evolución de la pandemia.</p>  
+  <p>Para que los datos sean comparativos entre fechas la leyenda es fija, por lo que en los primeros días da la sensación de que no ocurre nada</p>
+  <p>También he querido incluir un gŕafico lineal sobre la evolución de la pandemia en cada país, activando el efecto cuando te posicionas 
+  encima del elemento (hover), haciendo también uso de la excelente librería <a href="https://d3js.org/">D3.js</a>. </p>
+  <a href="src/demo4_world.html" target="_blank"><button type="button" >demo <i class="fa fa-cogs fa-2" aria-hidden="true"></i></button></a> 
+| 
+<a href="https://github.com/josemamira/covid19maps/blob/master/src/demo4_world.html" target="_blank"><button type="button" >código <i class="fa fa-github fa-2" aria-hidden="true"></i></button></a>
+
+
+<h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true">
+  <span aria-hidden="true" class="octicon octicon-link"></span></a>Mapa coroplético por Comunidades Autónomas (España).</h3>
+  <p>Es el mismo ejemplo que el anterior, con otra fuente de datos local y adscrita a otro nivel coroplético, en este ejemplo nos referimos a los afectados por 
+  COVID-19 en cada Comunidad Autónoma</p>
+  <p><img src="src/img/coropletico_spain.png"></p>
+  <p>Por desgracia, como continúen el incremento de casos el mapa será monocolor, salvo que cambie el valor de los intervalos de clase.</p>
+  <a href="src/demo4_spain.html" target="_blank"><button type="button" >demo <i class="fa fa-cogs fa-2" aria-hidden="true"></i></button></a> 
+  | 
+ <a href="https://github.com/josemamira/covid19maps/blob/master/src/demo4_spain.html" target="_blank"><button type="button" >código <i class="fa fa-github fa-2" aria-hidden="true"></i></button></a>
+
+<h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true">
+  <span aria-hidden="true" class="octicon octicon-link"></span></a>Mapa coroplético de fallecimientos por COVID-19 por países</h3>
+  <p>Es el mismo ejemplo que el de los paises pero con los fallecimientos.</p>
+  <p><img src="src/img/coropletico_world_deaths.png"></p>
+  <p>Uno aspecto a destacar es que al poder utilizar las columnas de dos conjuntos de datos, se pueden crear campos calculados. En este caso, se puede ver en el gráfico como aparece la cifra de los 
+  fallecimientos por millón de habitantes</p>
+  <a href="src/demo4_world_deaths.html" target="_blank"><button type="button" >demo <i class="fa fa-cogs fa-2" aria-hidden="true"></i></button></a> 
+  | 
+ <a href="https://github.com/josemamira/covid19maps/blob/master/src/demo4_world_deaths.html" target="_blank"><button type="button" >código <i class="fa fa-github fa-2" aria-hidden="true"></i></button></a>
+
+
+
+<h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true">
+  <span aria-hidden="true" class="octicon octicon-link"></span></a>Mapa de símbolo graduado</h3>
+  <video src="src/img/evolucion_covid19.mp4" width="743" height="471" autoplay muted loop controls></video>
+  <p>Sin lugar a dudas este es el mapa más impactante, donde podemos apreciar por fechas (slider en la parte inferior) como va evolucionando 
+  los contactos, pero mostrados como un símbolo graduado.</p>
+  <p>Quiero agradecer el interesante artículo "<a href="https://cartographicperspectives.org/index.php/journal/article/view/cp76-donohue-et-al/1307">Time Series Proportional Symbol Maps with Leaflet and jQuery</a> que me ha permitido realizar este mapa</p>
+
+  <a href="src/demo5_graduated_symbol_covid.html" target="_blank"><button type="button" >demo <i class="fa fa-cogs fa-2" aria-hidden="true"></i></button></a> 
+  | 
+ <a href="https://github.com/josemamira/covid19maps/blob/master/src/demo5_graduated_symbol_covid.html" target="_blank"><button type="button" >código <i class="fa fa-github fa-2" aria-hidden="true"></i></button></a>
+
+
+
+          
+<h3>
+<a id="creating-pages-manually" class="anchor" href="#creating-pages-manually" 
+   aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Enlaces de interés</h3>
+
+<p>Este proyecto utiliza las siguientes librerías JS o datos</p>
+<ul>
+  <li><a href="https://leafletjs.com/" target="_blank">Leaflet JS: excelente y sencilla API de mapas </a></li>
+  <li><a href="https://turfjs.org/" target="_blank">Geoprocesamiento espacial en Javascript</a></li>
+  <li><a href="http://d3.org" target="_blank">Potente librería para manejo de datos y representación de gráficos</a></li>
+  <li><a href="https://osm.org/" target="_blank">OpenStreetMap: Sin lugar a dudas el mapa libre más completo </a></li>
+  <li><a href="https://lodash.com/" target="_blank">A modern JavaScript utility library delivering modularity, performance & extras</a></li>
+  <li><a href="https://github.com/CSSEGISandData" target="_blank">Johns Hopkins University - Center for Systems Science and Engineering</a></li>
+  <li><a href="https://github.com/datadista/datasets/tree/master/COVID%2019" target="_blank">Periodismo de investigación, datos y nuevas narrativas para salir del ruido</a></li>
+</ul>
+          
+<h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"
+   ><span aria-hidden="true" class="octicon octicon-link"></span></a>Autor y contribuciones</h3>
+
+<p>Los ejemplos de esta web han sido realizados por José Manuel Mira Martínez. Sí se ha utilizado código de otro proyecto libre en el código fuente aparece citado.</p>
+
+<h3>
+<a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true">
+  <span aria-hidden="true" class="octicon octicon-link"></span></a>Contacto</h3>
+
+<p>Puedes ponerte en contacto en esta dirección de correo: <a href="mailto:josema.mira@gmail.com">josema.mira@gmail.com</a></p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/josemamira/covid19maps/archive/master.zip" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/josemamira/covid19maps/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/josemamira/covid19maps"></a> is maintained by <a href="https://github.com/josemamira">josemamira</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
