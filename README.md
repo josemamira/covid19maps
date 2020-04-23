@@ -8,7 +8,7 @@ Screenshot:
 covid19maps
 =============
 
-Created by José Manuel Mira at [covid19maps] (https://josemamira.github.io/covid19maps/)
+Created by [José Manuel Mira Martíneze](https://github.com/josemamira/)
 
 * [English](https://josemamira.github.io/covid19maps/) - Main web page with map demos.
 * [Español](https://josemamira.github.io/covid19maps/index-es.html) - Página web principal con demostraciones de mapa
