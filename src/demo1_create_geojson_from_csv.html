@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<title>Create GeoJSON from CSV with lon/lat columns</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/d3.v5.js" charset="utf-8"></script>
+
+	
+</head>
+<body>
+	<h3>Create GeoJSON from CSV with lon/lat columns</h3>
+	<label for="url">URL:</label>
+  <p><input type="text" id="url" name="url" size="120" value="https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv" readonly></p>
+<textarea id="geojson" rows="20" cols="100"></textarea>
+<p><button onclick="copyText()">Copy text to clipboard</button></p>
+
+
+
+<script>
+function copyText() {
+  var copyText = document.getElementById("geojson");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999)
+  document.execCommand("copy");
+  alert("Copied to clipboard. You can create a geojson file with this paste text and view in http://geojson.io : ");
+}	
+	
+	
+url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
+
+	// Generar el GEOJSON con sus atributos	
+var gj = {
+	"name":"COVID-19",
+	"type":"FeatureCollection",
+	"features":[]
+};
+
+d3.csv(url).then(function(data) {
+  data.forEach(function(d,i) {
+	  lat = Number(data[i].Lat);
+	  lon = Number(data[i].Long);
+		gj.features.push({ "type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": []
+			},
+			"properties": data[i] 
+		});
+		gj.features[i].geometry.coordinates.push(lon,lat);
+		gj.features[i].properties.id = i+1;
+		gj.features[i].properties.name = data[i]['Province/State']+' '+ data[i]['Country/Region'];
+		//console.log(data[i]);
+		//console.log(data[i].Lat);
+  });
+  //console.log(data[0]);
+  $("#geojson").val( JSON.stringify(gj));
+});
+
+</script>
+
+</body>
+</html>

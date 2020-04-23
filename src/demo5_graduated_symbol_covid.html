@@ -1,0 +1,514 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<title>Graduated symbol COVID19</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <script src="https://d3js.org/d3.v4.js" charset="utf-8"></script>
+    <script src="js/lodash.js"></script>
+
+<style>
+
+
+body {
+    padding: 0;
+    margin: 0;
+}
+html, body, #map {
+    height: 100%;
+    width: 100vw;
+}
+	
+	.legend, .temporal-legend {
+   		padding: 6px 40px;
+    		font: 12px/14px Arial, Helvetica, sans-serif;
+   		background: white;
+    		background: rgba(255,255,255,0.8);
+    		box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    		border-radius: 5px;
+	}
+	#legendTitle {
+  	  	text-align: center;
+   	 	margin-bottom: 15px;
+   		font-variant: small-caps;
+	}
+	.symbolsContainer {
+    	float: left;
+		margin-left: 50px;
+	}
+	.legendCircle {
+     	border-radius:50%; 
+     	border: 1px solid #732600; 
+     	background: rgba(252, 116, 48, .6);
+	 	display: inline-block;
+	}
+	.legendValue {
+    		position: absolute;
+    		right: 8px;
+	}	
+	
+	
+</style>
+	
+</head>
+<body>
+
+
+	<div id='map'></div>
+
+<!--
+<pre>https://cartographicperspectives.org/index.php/journal/article/view/cp76-donohue-et-al/1307</pre>
+<div id="salida"></div>
+-->
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+
+    
+<script>
+$(document).ready(function() {
+
+	var countries;	
+	
+		/*
+	L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+	  attribution: '<a href="htpps://github.josema.mira">Jose Manuel Mira</a> &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+	}).addTo(map);
+	
+	
+	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: '<a href="htpps://github.josema.mira">Jose Manuel Mira</a> Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox/dark-v9',
+		tileSize: 512,
+		zoomOffset: -1
+	}).addTo(map);
+	*/
+/*
+	L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+		subdomains: 'abcd',
+		maxZoom: 19
+	}).addTo(map);*/
+			
+
+	var clear = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+	  attribution: '<a href="htpps://github.josema.mira">Jose Manuel Mira</a> '+
+	  '| <a href="https://systems.jhu.edu/research/public-health/ncov/">JHU CSSE</a> '
+	});
+    var dark   = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: '<a href="https://www.openstreetmap.org/">OpenStreetMap</a>' +
+		' | <a href="https://www.mapbox.com/">Mapbox</a> ',
+		id: 'mapbox/dark-v9',
+		tileSize: 512,
+		zoomOffset: -1
+	});
+	var dark2 = L.tileLayer('&copy; https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+		attribution: '&copy; <a href="https://systems.jhu.edu/research/public-health/ncov/">JHU CSSE</a>&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+		subdomains: 'abcd',
+		maxZoom: 19
+	});
+	
+	//var map = L.map('map').setView([0,0], 2);
+	var map = L.map('map', {
+    center: [0,0],
+    zoom: 2,
+    layers: [dark, clear]
+});
+	var baseMaps = {
+		"Oscuro": dark,
+		"Claro": clear
+	};
+	
+	L.control.layers(baseMaps).addTo(map);
+
+
+
+
+// OBTENER EL CVS DE INTERNET, TRATARLO Y CONVERTIRLO A GEOJSON
+url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
+var newArr = [];
+var gj;
+/* Calcula los dias transcurridos entre 2 fechas*/
+function diffDays(d1, d2)
+{
+  var ndays;
+  var tv1 = d1.valueOf();  // msec since 1970
+  var tv2 = d2.valueOf();
+
+  ndays = (tv2 - tv1) / 1000 / 86400;
+  ndays = Math.round(ndays - 0.5);
+  return ndays;
+}
+
+/* Función que suma o resta días a una fecha, si el parámetro
+   días es negativo restará los días*/
+function sumarDias(fecha, dias){
+  fecha.setDate(fecha.getDate() + dias);
+  return fecha;
+}
+
+// Función para sumar dias a la fecha e inicio
+function getDia(numero){
+	var d = new Date('01/22/2020');
+	fSuma = sumarDias(d, numero);
+	dia = fSuma.getDate();
+	var meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+	mes = fSuma.getMonth();
+	anyo = fSuma.getFullYear();
+	return dia+'-'+meses[mes]+'-'+anyo;	
+}
+// Test
+/*
+console.log(getDia(0));
+console.log(getDia(1));
+console.log(getDia(2));
+console.log(getDia(5));
+console.log(getDia(10));
+console.log(getDia(15));
+console.log(getDia(20));
+console.log(getDia(25));
+console.log(getDia(30));
+console.log(getDia(35));
+console.log(getDia(40));
+console.log(getDia(45));
+console.log(getDia(50));
+console.log(getDia(55));
+console.log(getDia(60));
+console.log(getDia(65));
+console.log(getDia(70));
+console.log(getDia(75));
+*/
+
+d3.csv(url, function(data) {
+	
+	$.each(data, function (i, item) {
+		obj = Object(data); 
+		var renamed = _.mapKeys(obj[i], function(value, key) {
+			if ( key == 'Country/Region') {
+				return 'name';
+			} else if ( key == 'Province/State') {
+				return 'name2';
+			} else if ( key == 'Lat') {
+				return 'lat';
+			} else if ( key == 'Long') {
+				return 'lon';
+			} else if (key != 'Lat' && key != 'Long') {
+				var startDate = new Date(key)   // 2000-01-01
+				var endDate =   new Date(); 
+				var fInicio =   new Date('1/22/20');          // Today
+				var nDays = diffDays(startDate, endDate);
+				var totalDias= diffDays(fInicio,endDate);
+				return totalDias-nDays;
+				//return nDays;
+			} else {return key;	}	
+		});
+		newArr.push(renamed);
+	
+	});
+	//console.log(newArr); // ver el nuevo array con los nombres de columnas cambiados
+	
+	// Generar el GEOJSON con sus atributos
+	var gj = {
+		"name":"COVID-19",
+		"type":"FeatureCollection",
+		"features":[]
+			};
+	for (var i = 0; i < newArr.length; i++) {
+		lat = Number(newArr[i]['lat']);
+		lon = Number(newArr[i]['lon']);
+		gj.features.push({ "type": "Feature",
+						   "geometry": {
+							   "type": "Point",
+							   "coordinates": []
+							   },
+							"properties": newArr[i] });
+		gj.features[i].geometry.coordinates.push(lon,lat);
+		gj.features[i].properties.id = i+1;
+		gj.features[i].properties.name = newArr[i]['name']+' '+ newArr[i]['name2'];
+	}
+    // $('#salida').append(  JSON.stringify(gj)  ); // Ver el geojson
+	data = gj;
+	// FIN GENERAR GEOJSON
+	
+	// 2ª parte, procesar el geojson para representarlo dinámicamente
+	var info = processData(data);
+	createPropSymbols(info.timestamps, data);
+	createLegend(info.min,info.max);
+	createSliderUI(info.timestamps);
+
+	function processData(data) {
+		var timestamps = [];
+		var min = Infinity; 
+		var max = -Infinity; 
+
+		for (var feature in data.features) {
+
+			var properties = data.features[feature].properties; 
+			
+
+			for (var attribute in properties) { 
+
+				if ( attribute != 'name2' &&
+				     attribute != 'id' &&
+				     attribute != 'name' &&
+				     attribute != 'lat' &&
+				     attribute != 'lon' ) {
+						
+					if ( $.inArray(attribute,timestamps) === -1) {
+						timestamps.push(attribute);		
+					}
+					//console.log(properties[attribute]);
+					//console.log( Math.max(properties[attribute]) );
+					if (properties[attribute] < min) {	
+						min = properties[attribute];
+					}
+						
+					if (properties[attribute] > max) { 
+						//max = properties[attribute]; 
+						max = Math.max(properties[attribute]); 
+						//console.log(max);
+					}
+				}
+			}
+		}
+
+		return {
+			timestamps : timestamps,
+			min : min,
+			max : max
+		}
+	}	
+
+
+	function createPropSymbols(timestamps, data) {
+	  try {
+			//console.log(timestamps);
+			//console.log(data);
+			
+		countries = L.geoJson(data, {		
+
+			pointToLayer: function(feature, latlng) {	
+
+				return L.circleMarker(latlng, { 
+			
+				 fillColor: '#fc7430', // #fc7430   708598
+				 color: '#732600', //732600   537898
+				 weight: 1, 
+				 fillOpacity: 0.6 
+				}).on({
+
+					mouseover: function(e) {
+						this.openPopup();
+						this.setStyle({color: 'yellow'});
+					},
+					mouseout: function(e) {
+						this.closePopup();
+						this.setStyle({color: '#732600'});
+							
+					}
+				});
+			}
+			
+		}).addTo(map);
+		
+
+		updatePropSymbols(timestamps[0]);
+	  } catch(e) { console.log(e);}
+
+	}
+
+
+	function updatePropSymbols(timestamp) {
+	  try {
+	    
+		countries.eachLayer(function(layer) {
+	        //console.log(timestamp);
+			var props = layer.feature.properties;
+			//console.log(props); //devuelve el array completo de todos los registros
+			var radius = calcPropRadius(props[timestamp]);
+			//console.log(props[timestamp]); //devuelve el valor de casos de la fecha (timestamp) activo
+			var popupContent = '<b>' + String(props[timestamp]) + 
+					' casos</b><br>' +
+					'<i>' + props.name +
+					'</i> el </i>' + 
+					getDia(Number(timestamp)) + '</i>';
+
+			layer.setRadius(radius);
+			layer.bindPopup(popupContent, { offset: new L.Point(0,-radius) });
+		});
+	  } catch(e) { console.log(e);}
+	}
+	
+	
+	function calcPropRadius(attributeValue) {
+	  try {
+
+		//var scaleFactor = 0.015; //0.02
+		var scaleFactor = (40*40*Math.PI)/info.max; // El valor 40 significa que 40x2=80 pix es el valor máximo del circulo que se dibuja. 
+		// Con ese valor, y con el valor máximo de todos los valores (que supongo que sera en usa) se calcula el factor de escala.
+		var area = attributeValue * scaleFactor;
+		return Math.sqrt(area/Math.PI)*2;
+	  } catch(e) { console.log(e);}			
+	}
+
+	function createLegend(min, max) {
+		//console.log(min + ' '+ max);
+	  try {
+		 
+		if (min < 10) {	
+ 		min = 10; 
+		}
+
+		function roundNumber(inNumber) {
+
+				return (Math.round(inNumber/10) * 10);  
+		}
+
+		var legend = L.control( { position: 'bottomright' } );
+
+		legend.onAdd = function(map) {
+
+		var legendContainer = L.DomUtil.create('div', 'legend');  
+		var symbolsContainer = L.DomUtil.create('div', 'symbolsContainer');
+		var classes = [roundNumber(min), roundNumber((max-min)/2), roundNumber(max)]; 
+		var legendCircle;  
+		var lastRadius = 0;
+		var currentRadius;
+		var margin;
+
+		L.DomEvent.addListener(legendContainer, 'mousedown', function(e) { 
+			L.DomEvent.stopPropagation(e); 
+		});  
+
+		$(legendContainer).append('<h3 id="legendTitle">COVID-19 INFECTADOS</h3>');
+		
+		for (var i = 0; i <= classes.length-1; i++) {  
+
+			legendCircle = L.DomUtil.create('div', 'legendCircle');  
+			
+			currentRadius = calcPropRadius(classes[i]);
+			
+			margin = -currentRadius - lastRadius - 2;
+
+			$(legendCircle).attr('style', 'width: ' + currentRadius*2 + 
+				'px; height: ' + currentRadius*2 + 
+				'px; margin-left: ' + margin + 'px' );				
+			$(legendCircle).append('<span class="legendValue">'+classes[i]+'</span>');
+
+			$(symbolsContainer).append(legendCircle);
+
+			lastRadius = currentRadius;
+
+		}
+
+		$(legendContainer).append(symbolsContainer); 
+
+		return legendContainer; 
+
+		};
+
+		legend.addTo(map);  
+	  } catch(e) { console.log(e);}
+	} // end createLegend();
+
+	function createSliderUI(timestamps) {
+		
+      try {
+		var sliderControl = L.control({ position: 'bottomleft'} );
+
+		sliderControl.onAdd = function(map) {
+
+			var slider = L.DomUtil.create('input', 'range-slider');
+	
+			L.DomEvent.addListener(slider, 'mousedown', function(e) { 
+				L.DomEvent.stopPropagation(e); 
+			});
+
+			$(slider)
+				.attr({'type':'range', 
+					'max': timestamps[timestamps.length-1], 
+					'min': timestamps[0], 
+					'step': 1})
+		  		.on('input change', function() {
+					//console.log(max);
+					//console.log(min);
+		  		updatePropSymbols($(this).val().toString());
+		  	});
+			return slider;
+		}
+
+		sliderControl.addTo(map) 
+	  } catch(e) { console.log(e); }
+	}
+
+
+	function createSliderUI(timestamps) {
+	  try {
+		var sliderControl = L.control({ position: 'bottomleft'} );
+
+		sliderControl.onAdd = function(map) {
+
+			var slider = L.DomUtil.create('input', 'range-slider');
+	
+			L.DomEvent.addListener(slider, 'mousedown', function(e) { 
+				L.DomEvent.stopPropagation(e); 
+			});
+
+			$(slider)
+				.attr({'type':'range', 
+					'max': timestamps[timestamps.length-1], 
+					'min': timestamps[0], 
+					'step': 1,
+					'value': String(timestamps[0])})
+		  		.on('input change', function() {
+		  		updatePropSymbols($(this).val().toString());
+		  			//$('.temporal-legend').text(this.value);
+		  			$('.temporal-legend').text( 'Dia:'+this.value + ' '+getDia(Number(this.value)) );
+		  	});
+			return slider;
+		}
+
+		sliderControl.addTo(map)
+		createTemporalLegend(timestamps[0]); 
+	  } catch(e) { console.log(e); }
+	}
+
+	function createTemporalLegend(startTimestamp) {
+		//console.log(startTimestamp); // 0
+	  try {
+
+		var temporalLegend = L.control({ position: 'bottomleft' }); 
+
+		temporalLegend.onAdd = function(map) { 
+			var output = L.DomUtil.create('output', 'temporal-legend');
+ 			$(output).text(startTimestamp)
+			return output; 
+		}
+
+		temporalLegend.addTo(map); 
+		
+	  } catch(e) { console.log(e); }
+	}
+	
+	
+});// fin  d3.csv
+
+
+}); // fin ready
+
+</script>
+
+
+
+</body>
+</html>
