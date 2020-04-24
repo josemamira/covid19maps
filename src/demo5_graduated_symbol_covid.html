@@ -74,31 +74,7 @@ html, body, #map {
 <script>
 $(document).ready(function() {
 
-	var countries;	
-	
-		/*
-	L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
-	  attribution: '<a href="htpps://github.josema.mira">Jose Manuel Mira</a> &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-	}).addTo(map);
-	
-	
-	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-		maxZoom: 18,
-		attribution: '<a href="htpps://github.josema.mira">Jose Manuel Mira</a> Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-		id: 'mapbox/dark-v9',
-		tileSize: 512,
-		zoomOffset: -1
-	}).addTo(map);
-	*/
-/*
-	L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
-		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-		subdomains: 'abcd',
-		maxZoom: 19
-	}).addTo(map);*/
-			
+	var countries;		
 
 	var clear = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
 	  attribution: '<a href="htpps://github.josema.mira">Jose Manuel Mira</a> '+
@@ -125,8 +101,8 @@ $(document).ready(function() {
     layers: [dark, clear]
 });
 	var baseMaps = {
-		"Oscuro": dark,
-		"Claro": clear
+		"Dark": dark,
+		"Clear": clear
 	};
 	
 	L.control.layers(baseMaps).addTo(map);
@@ -162,7 +138,8 @@ function getDia(numero){
 	var d = new Date('01/22/2020');
 	fSuma = sumarDias(d, numero);
 	dia = fSuma.getDate();
-	var meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+	//var meses = new Array ("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+	var meses = new Array('January','February','March','April','May','June','July','August','September','October','November','December');
 	mes = fSuma.getMonth();
 	anyo = fSuma.getFullYear();
 	return dia+'-'+meses[mes]+'-'+anyo;	
@@ -170,22 +147,6 @@ function getDia(numero){
 // Test
 /*
 console.log(getDia(0));
-console.log(getDia(1));
-console.log(getDia(2));
-console.log(getDia(5));
-console.log(getDia(10));
-console.log(getDia(15));
-console.log(getDia(20));
-console.log(getDia(25));
-console.log(getDia(30));
-console.log(getDia(35));
-console.log(getDia(40));
-console.log(getDia(45));
-console.log(getDia(50));
-console.log(getDia(55));
-console.log(getDia(60));
-console.log(getDia(65));
-console.log(getDia(70));
 console.log(getDia(75));
 */
 
@@ -390,7 +351,7 @@ d3.csv(url, function(data) {
 			L.DomEvent.stopPropagation(e); 
 		});  
 
-		$(legendContainer).append('<h3 id="legendTitle">COVID-19 INFECTADOS</h3>');
+		$(legendContainer).append('<h3 id="legendTitle">COVID-19 CASES</h3>');
 		
 		for (var i = 0; i <= classes.length-1; i++) {  
 
@@ -473,7 +434,7 @@ d3.csv(url, function(data) {
 		  		.on('input change', function() {
 		  		updatePropSymbols($(this).val().toString());
 		  			//$('.temporal-legend').text(this.value);
-		  			$('.temporal-legend').text( 'Dia:'+this.value + ' '+getDia(Number(this.value)) );
+		  			$('.temporal-legend').text( 'Day:'+this.value + ' '+getDia(Number(this.value)) );
 		  	});
 			return slider;
 		}
