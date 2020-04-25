@@ -42,7 +42,9 @@ the time available to research the possibilities of cartography to offer informa
 <p> The starting point of this project was and is to offer developers the ability to display mapping on their respective portals in an easy and unattended manner. For this reason the cartography had to fulfill the following requirements: </p>
 <ul>
 	<li> Use a 100% free maps API. In this sense I have chosen to use Leaflet as an engine to publish the maps </li>
-	<li> The rest of the Javascript libraries used are also in the public domain, and their use by developers is very widespread. Mainly I have used: D3 and JQuery. The only library that is really spatially geoprocessed is the excellent Turf.js library </li>
+	<li> The rest of the Javascript libraries used are also in the public domain, and their use by developers is 
+		very common. 
+		Mainly I have used: D3 and JQuery. The only JS library that is really spatially geoprocessed is the excellent Turf.js tool </li>
 	<li> The geographic data must be in a format that is also free and widespread in the world of geomatics. In this sense, the
 "GeoJSON" format. I have used 2 very simplified data sets, with few vertices, so that their loading is fast </li>
 	<li> Statistical data comes from public and open sources, and is available in CSV format.
@@ -68,7 +70,7 @@ The sources I have used are:
 
 <p> This example does not contain cartography, but shows the capabilities to generate a GeoJSON with all the data "on the fly". </p>
 <p> If you want to see the result you can copy the result to the clipboard and view it in the viewer <a href="http://geojson.io/"> http://geojson.io </a> </p>
-<p> One aspect to highlight in the code is the treatment of the source data. </p>
+
 <img src="src/img/geojsoncsv.png">
 <a href="src/demo1_create_geojson_from_csv.html" target="_blank"><button type="button" >demo <i class="fa fa-cogs fa-2" aria-hidden="true"></i></button></a> 
 | 
@@ -101,14 +103,13 @@ The sources I have used are:
   <span aria-hidden="true" class="octicon octicon-link"></span></a>Point density map </h3>
 
 <p> These types of maps are no longer very common, but it must be recognized that together with their simplicity is the ability to clearly communicate
-a phenomenon. Many of us have seen the typical dot map with dots, where a point represents a certain number of elements (people, votes, ...).
+a phenomenon. Many of us have seen the typical dot map, where a point represents a certain number of elements (people, votes, ...).
 Well, this example taken to the COVID-19 case gives us an idea of how the same data (cases) changes its interpretation depending on the number of elements that identify a point.
 </p>
 <p> Let's see an example from Spain, for values of 200, 1000 and 5000 cases per point. </p>
 <p> <img src = "src/img/dotmap_spain.png"> </p>
 <p> This website has a slider control to select the number of cases for each point. It's at the bottom left. </p>
 <p> <img src = "src/img/slider.png"> </p>
-<p> To make this website I have used the excellent library <a href="https://turfjs.org/">TurfJS</a></p>
 <a href="src/demo3_dotmap.html" target="_blank"><button type="button" >demo <i class="fa fa-cogs fa-2" aria-hidden="true"></i></button></a> 
 | 
 <a href="https://github.com/josemamira/covid19maps/blob/master/src/demo3_dotmap.html" target="_blank"><button type="button" >código <i class="fa fa-github fa-2" aria-hidden="true"></i></button></a>
