@@ -41,9 +41,12 @@ el tiempo disponible para investigar sobre las posibilidades que ofrece la carto
 <p>El punto de partida de este proyecto era y es ofrecer a los desarrolladores la capacidad de mostrar cartografía en sus respectivos portales de una manera fácil y desatendida. Por ello la cartografía debía de cumplir los siguientes requerimientos:</p>
 <ul>
 	<li>Utilizar una API de mapas 100 % libre. En este sentido he optado por utilizar Leaflet como motor para publicar los mapas</li>
-	<li>El resto de librerías Javascript utilizadas son también de dominio público, y muy extendido su uso por los desarrolladores. Principalmente he utilizado: D3 y JQuery. La única librería que es realmente de geoprocesamiento espacial es la excelente librería Turf.js</li>
-	<li>Los datos geográficos deberán estar en un formato también libre y extendido en el mundo de la geomática. En este sentido se ha optado por el 
-	formato "GeoJSON". He utilizado 2 conjunto de datos muy simplificados, con pocos vértices, para que su carga sea rápida </li>
+	<li>El resto de librerías Javascript utilizadas son también de dominio público, y muy extendido su uso por los desarrolladores. 
+		Principalmente he utilizado: D3 y JQuery. 
+		También he utilizado Turj.js, una excelente librería para el geoprocesamiento espacial en Javascrpit</li>
+	<li>Los datos geográficos deberán estar en un formato también libre y extendido en el mundo de la geomática. En este sentido se 
+		ha optado "GeoJSON". He utilizado 2 conjunto de datos muy simplificados, con pocos vértices, para que su carga sea 
+		rápida </li>
 	<li>Los datos estadísticos proceden de fuente públicas y abiertas, y están disponibles en formato CSV. 
 	En ningún momento he descargado los datos para tratarlos. Estos se conectan por AJAX desde sus respectivos servidores, realizando online una unión entre columnas (JOIN en terminología GIS). 
 	La actualización de los datos es por tanto la de estas fuentes. Hasta ahora (18 de abril 2020) ésta es diaria. 
@@ -67,7 +70,6 @@ el tiempo disponible para investigar sobre las posibilidades que ofrece la carto
 
 <p>Este ejemplo no contiene cartografía, pero muestra las capacidades para generar "al vuelo" un GeoJSON con todos los datos.</p>
 <p>Si deseas ver el resultado puedes copiar el resultado al portapapeles y visualizarlo en el visor <a href="http://geojson.io/">http://geojson.io</a></p>
-<p>Un aspecto a destacar en el código es el tratamiento de los datos de origen.</p>
 <img src="src/img/geojsoncsv.png">
 <a href="src/demo1_create_geojson_from_csv.html" target="_blank"><button type="button" >demo <i class="fa fa-cogs fa-2" aria-hidden="true"></i></button></a> 
 | 
@@ -98,15 +100,19 @@ el tiempo disponible para investigar sobre las posibilidades que ofrece la carto
   <span aria-hidden="true" class="octicon octicon-link"></span></a>Mapa de densidad de puntos (density map)</h3>
 
 <p>Este tipo de mapas ya no suelen ser muy habituales pero hay que reconocer que unido a su simpleza está la capacidad de comunicar claramente 
-un fenómeno. Muchos hemos visto el típico mapa de cabezas de ganado, donde un punto representa una determinada cantidad de cabezas. 
-Pues este ejemplo llevado al caso del COVID-19 nos da una idea de como un mismo dato (casos) cambia su interpretación en función del número de elementos que identifican a un punto.
+un fenómeno. Muchos hemos visto el típico mapa de puntos, donde un punto representa una determinada cantidad de elementos 
+	(votos, cabeza de ganado, etc). 
+Pues este ejemplo llevado al caso del COVID-19 nos da una idea de como un mismo dato (casos) cambia su interpretación en 
+	función del número de elementos que identifican a un punto.
 </p>
 <p>Veamos un ejemplo de España, para valores de 200, 1000 y 5000 casos por punto.</p>
 <p><img src="src/img/dotmap_spain.png"></p>
 <p>Esta web dispone de un control deslizador (slider) para seleccionar el número de casos por cada punto. Está en la parte inferior izquierda.</p>
 <p><img src="src/img/slider.png"></p>
-<p>Para realizar esta web he utilizado la excelente librería <a href="https://turfjs.org/">TurfJS</a></p>
-<a href="src/demo3_dotmap.html" target="_blank"><button type="button" >demo <i class="fa fa-cogs fa-2" aria-hidden="true"></i></button></a> 
+<p>Para realizar esta función he utilizado la función de generar un punto en en polígono incluida en <a href="https://turfjs.org/">TurfJS</a></p>
+<a href="src/demo3_dotmap.html" target="_blank">
+	<button type="button" >demo <i class="fa fa-cogs fa-2" aria-hidden="true"></i></button>
+</a> 
 | 
 <a href="https://github.com/josemamira/covid19maps/blob/master/src/demo3_dotmap.html" target="_blank"><button type="button" >código <i class="fa fa-github fa-2" aria-hidden="true"></i></button></a>
 
