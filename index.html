@@ -10,7 +10,13 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
     <!--<link rel="stylesheet" type="text/css" href="css/font-awesome-4.7.0/css/font-awesome.min.css" media="print">-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+	<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+    <script src="src/js/jquery-3.2.1.min.js"></script>
+    <script src="src/js/d3.v5.js" charset="utf-8"></script>
+    <!-- control -->
+	<script src="src/js/Leaflet.Control.Custom.js"></script>
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -39,6 +45,9 @@
 
 <p>Given the world situation in which we find ourselves (April 2020), where the population is confined to their homes (the case of Spain) I have wanted to take advantage of
 the time available to research the possibilities of cartography to offer information in a more attractive way than the cold tables of figures. </p>
+
+<div id="map" style="width: 600px; height: 400px;"></div>		
+		
 <p> The starting point of this project was and is to offer developers the ability to display mapping on their respective portals in an easy and unattended manner. For this reason the cartography had to fulfill the following requirements: </p>
 <ul>
 	<li> Use a 100% free maps API. In this sense I have chosen to use Leaflet as an engine to publish the maps </li>
@@ -213,6 +222,8 @@ If code from another free project has been used, it's quoted on source code. </p
         </aside>
       </div>
     </div>
+	  
+<script src="src/js/map.js"></script>
 
   
   </body>
