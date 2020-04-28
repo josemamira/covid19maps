@@ -9,7 +9,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="js/d3.v5.js" charset="utf-8"></script>
-    <script src="js/lodash.js"></script>
+    <!--<script src="js/lodash.js"></script>-->
+    <script src="js/alasql.min.js"></script>	
 	
 <style>
 table {
@@ -43,8 +44,9 @@ Promise.all([
 ]).then(function(allData) {
     a = allData[0];
     b = allData[1];
-    var u = _(a).concat(b).groupBy('cod_ine').map(_.spread(_.assign)).value();
-    fin = JSON2CSV(u);
+    var res = alasql('SELECT * FROM ? a LEFT JOIN ? b ON a.cod_ine = b.cod_ine',[a, b]);
+    //var res = _(a).concat(b).groupBy('cod_ine').map(_.spread(_.assign)).value();
+    fin = JSON2CSV(res);
     createTable(fin);
 });
 
