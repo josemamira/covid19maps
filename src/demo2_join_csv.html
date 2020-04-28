@@ -39,8 +39,10 @@ tr:nth-child(even) {background-color: #f2f2f2;}
 
 
 Promise.all([
-    d3.csv("data/ccaa_paro2.csv"),
-    d3.csv("data/ccaa_covid19_casos.csv")
+    d3.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_camas_uci_2017.csv"),
+    d3.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_altas.csv")
+    //d3.csv("data/ccaa_paro2.csv"),
+    //d3.csv("data/ccaa_covid19_casos.csv")
 ]).then(function(allData) {
     a = allData[0];
     b = allData[1];
