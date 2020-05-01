@@ -1,0 +1,332 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<title>Unión de dos ficheros CSV (join) y tabla resultante</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="js/d3.v5.js" charset="utf-8"></script>
+    <script src="js/alasql.min.js"></script>
+	
+<style>
+	.center {
+		text-align: center;
+	}
+	
+	
+	table {
+	  border-collapse: collapse;
+	  width: 100%;
+	}
+
+	th, td {
+	  text-align: left;
+	  padding: 8px;
+	}
+
+	tr:nth-child(even) {background-color: #f2f2f2;}
+
+
+
+
+	.bar {
+	  fill: steelblue;
+	}
+
+	.bar:hover {
+	  fill: brown;
+	}
+	
+	.grid line {stroke: lightgrey;stroke-opacity: 0.7;shape-rendering: crispEdges;}
+	.grid path {stroke-width: 0;}
+</style>
+	
+</head>
+<body>
+	<h2 class="center">Bar chart of COVID-19 infected cases</h2>
+	<h3 class="center">By Autonomous communities (Spain)</h3>
+
+<!-- https://tilemill-project.github.io/tilemill/docs/guides/advanced-legends/ -->
+
+<div class='my-legend '>
+	<div class='legend-title'>Bar color explanation</div>
+		<div class='legend-scale'>
+		  <ul class='legend-labels'>
+			
+			<li><span style='background:#FED976;'></span>0 - 1M</li>
+			<li><span style='background:#FEB24C;'></span>2M</li>
+			<li><span style='background:#FD8D3C;'></span>5M</li>
+			<li><span style='background:#FC4E2A;'></span>10M</li>
+			<li><span style='background:#E31A1C;'></span>20M</li>
+			<li><span style='background:#BD0026;'></span>50M</li>
+			<li><span style='background:#800026;'></span>+100M</li>
+
+		  </ul>
+		</div>
+	<div class='legend-source'>Source: <a href="https://github.com/datadista/datasets/tree/master/COVID%2019">Datadista</a></div>
+</div>
+ 
+<style type='text/css'>
+  .my-legend .legend-title {
+    text-align: left;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 90%;
+    }
+  .my-legend .legend-scale ul {
+    margin: 0;
+    padding: 0;
+    float: left;
+    list-style: none;
+    }
+  .my-legend .legend-scale ul li {
+    display: block;
+    float: left;
+    width: 50px;
+    margin-bottom: 6px;
+    text-align: center;
+    font-size: 80%;
+    list-style: none;
+    }
+  .my-legend ul.legend-labels li span {
+    display: block;
+    float: left;
+    height: 15px;
+    width: 50px;
+    }
+  .my-legend .legend-source {
+    font-size: 70%;
+    color: #999;
+    clear: both;
+    }
+  .my-legend a {
+    color: #777;
+    }
+</style>
+
+
+
+
+<script>
+d3.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_altas.csv").then(function(data) {	
+    //a = allData[0];
+    var ccaas = alasql("SELECT cod_ine,CCAA FROM ? data",[data]);
+    for (var i = 0; i < ccaas.length; i++) {
+		// grafico para cada CCAA
+		var ca = alasql("SELECT * FROM ? data WHERE data.cod_ine = '"+ccaas[i].cod_ine+"'",[data]);
+		delete ca[0].CCAA;
+		delete ca[0].cod_ine;
+		var k = Object.keys(ca[0]) // returns an array of keys.
+		var v = Object.values(ca[0]) // returns an array of values.
+		var casos = [];
+
+		for (var j = 0; j < k.length; j++) {
+			var caso = {  nombre: k[j],  valores: v[j]	};
+			casos.push(caso);
+		}	
+		title = ccaas[i].CCAA;
+		grafico(casos,title);
+	}
+	
+	// Tabla
+	var ccaas2 = alasql("SELECT * FROM ? data",[data]);	
+    createTable(JSON2CSV(ccaas2));
+	
+	
+});
+
+function grafico(data, title){
+	
+    var locale = d3.timeFormatDefaultLocale({      
+		"decimal": ",",
+        "thousands": ".",
+        "grouping": [3],
+        "currency": ["€", ""],
+        "dateTime": "%a %b %e %X %Y",
+        "date": "%d/%m/%Y",
+        "time": "%H:%M:%S",
+        "periods": ["AM", "PM"],
+        "days": ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+        "shortDays": ["Dom", "Lun", "Mar", "Mi", "Jue", "Vie", "Sab"],
+        "months": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+        "shortMonths": ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]  
+    })	
+	
+	var svg = d3.select("body")
+    .append("svg")
+    .attr("width", 500)
+    .attr("height", 250);
+
+	margin = {
+		top: 20,
+		right: 20,
+		bottom: 60,
+		left: 50
+	},
+	width = +svg.attr("width") - margin.left - margin.right,
+	height = +svg.attr("height") - margin.top - margin.bottom,
+	g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	
+	// Título grafico (CCAA)
+	g.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")  
+        .style("font-size", "14px") 
+        .style("text-decoration", "underline")  
+        .text(title);
+
+	var x = d3.scaleBand()
+		.rangeRound([0, width])
+		.padding(0.1);
+
+	var y = d3.scaleLinear()	
+	.rangeRound([height, 0]);
+	
+	// Fechas	
+    var parseTime = d3.timeParse("%Y-%m-%d");
+    //var format = locale.format("%d-%b-%Y"); Devuelve 04-Abr-2020
+    //var format = locale.format("%d-%b");    Devuelve 04-Abr
+    //var format = locale.format("%d-%m-%Y"); Devuelve 04-4-2020
+    var format = locale.format("%d-%m"); //Devuelve 16/04
+    //x.domain(data.map(function (d) { return parseTime(d.nombre);	}));
+    x.domain(data.map(function (d) { return format(parseTime(d.nombre));	}));
+
+	y.domain([0, d3.max(data, function (d) {
+				return Number(d.valores);
+			})]);
+
+	g.append("g")
+	.attr("transform", "translate(0," + height + ")")
+	
+	.call(d3.axisBottom(x))
+	.selectAll("text")
+    .attr("y", 0)
+    .attr("x", 9)
+    .attr("dy", ".35em")
+    .attr("transform", "rotate(90)")
+    .style("text-anchor", "start");
+
+	g.append("g")
+	.call(d3.axisLeft(y))
+	.append("text")
+	.attr("fill", "#000")
+	.attr("transform", "rotate(-90)")
+	.attr("y", 6)
+	.attr("dy", "0.71em")
+	.attr("text-anchor", "end")
+	.text("Cases");
+
+	// lineas horizontales 
+	g.append("g")
+      .attr("class", "grid")
+      .call(d3.axisLeft(y)
+              .tickSize(-width)
+              .tickFormat("")
+      );
+
+	g.selectAll(".bar")
+	.data(data)
+	.enter().append("rect")
+	//.attr("class", "bar") // azul
+	.attr("fill", function(d) {
+		return  d.valores > 100000 ? '#800026' :
+					d.valores > 50000  ? '#BD0026' :
+					d.valores > 20000  ? '#E31A1C' :
+					d.valores > 10000  ? '#FC4E2A' :
+					d.valores > 5000   ? '#FD8D3C' :
+					d.valores > 2000   ? '#FEB24C' :
+					d.valores > 1000   ? '#FED976' :
+										  '#FFEDA0';
+	  })
+
+
+	.attr("x", function (d) {
+		//return x(d.nombre);
+		return x( format(parseTime(d.nombre)) );
+	})
+		
+	
+	.attr("y", function (d) {
+		return y(Number(d.valores));
+	})
+	.attr("width", x.bandwidth())
+	.attr("height", function (d) {
+		return height - y(Number(d.valores));
+	});
+
+}
+
+
+// https://jsfiddle.net/sturtevant/vUnF9/
+function JSON2CSV(objArray) {
+var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+var str = '';
+var line = '';
+    var head = array[0];// cabecera
+	for (var index in array[0]) {
+		line += index + ',';
+    }
+
+    line = line.slice(0, -1);
+    str += line + '\r\n';
+
+	for (var i = 0; i < array.length; i++) {
+		var line = '';
+		for (var index in array[i]) {
+			line += array[i][index] + ',';
+		}
+		line = line.slice(0, -1);
+		str += line + '\r\n';
+	}
+	return str;
+}
+
+// https://programacion.net/articulo/parseando_un_archivo_csv_con_javascript_1414
+function createTable(data) {
+  var allRows = data.split(/\r?\n|\r/);
+  var table = '<table>';
+  for (var singleRow = 0; singleRow < allRows.length; singleRow++) {
+    if (singleRow === 0) {
+      table += '<thead>';
+      table += '<tr>';
+    } else {
+      table += '<tr>';
+    }
+    var rowCells = allRows[singleRow].split(',');
+    for (var rowCell = 0; rowCell < rowCells.length; rowCell++) {
+      if (singleRow === 0) {
+        table += '<th>';
+        table += rowCells[rowCell];
+        table += '</th>';
+      } else {
+        table += '<td>';
+        table += rowCells[rowCell];
+        table += '</td>';
+      }
+    }
+    if (singleRow === 0) {
+      table += '</tr>';
+      table += '</thead>';
+      table += '<tbody>';
+    } else {
+      table += '</tr>';
+    }
+  } 
+  table += '</tbody>';
+  table += '</table>';
+  $('body').append(table);
+}  
+
+
+
+</script>
+
+
+
+</body>
+</html>
+
