@@ -15,6 +15,7 @@
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
     <script src="js/jquery-3.2.1.min.js"></script>
     <script src="js/d3.v5.js" charset="utf-8"></script>
+    <script src="js/alasql.min.js"></script>
     <!-- control -->
 	<script src="js/Leaflet.Control.Custom.js"></script>
 
@@ -36,10 +37,51 @@ html, body, #map {
 	border-radius: 5px; } 
 .info h4 { margin: 0 0 5px; color: #777; }
 .legend { text-align: left; line-height: 18px; color: #555; } 
-.legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }</style>
+.legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+
+/* loader icon  */
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index:2;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+/* fin loader icon */
+
+/* css */
+ul {
+  list-style: none;
+  padding: 0;
+}
+li {
+  padding: 5px 10px;
+  background-color: #EEEEEE;
+  border: 1px solid #DDDDDD;
+}
+
+
+</style>
 </head>
 <body>
-
+<div id="loader" class="loader"></div>
 <div id='map'></div>
 
 
@@ -78,6 +120,8 @@ html, body, #map {
 	$('#datesSel').on('change', function() {
 	  //alert( this.value );
 	  restyleLayer(this.value);
+	  top10(this.value)
+	  
 	});
 	// delete duplicates
 	$( '#datesSel').focus(function() {
@@ -183,80 +227,6 @@ html, body, #map {
 
 }
 
-
-
-
-
-// http://bl.ocks.org/Andrew-Reid/11602fac1ea66c2a6d7f78067b2deddb
-function chart(d) {
-  //console.log('iniciando chart');
-  //var feature = d.feature;
-  //var data = feature.properties.data;
-  data = d;
-  var width = 300;
-  var height = 100;
-  var margin = {left:20,right:15,top:40,bottom:40};
-  var parse = d3.timeParse("%m");
-  var format = d3.timeFormat("%b");
-   
-  svg = d3.select("#chart");
-  //var div = d3.create("div")
-  var svg = d3.create("svg")
-  //var svg = div.append("svg")
-    .attr("width", width+margin.left+margin.right)
-    .attr("height", height+margin.top+margin.bottom);
-  var g = svg.append("g")
-    .attr("transform","translate("+[margin.left,margin.top]+")");
-    
-  var y = d3.scaleLinear()
-    .domain([0, d3.max(data, function(d) { return d; }) ])
-    .range([height,0]);
-    
-  var yAxis = d3.axisLeft()
-    .ticks(4)
-    .scale(y);
-  g.append("g").call(yAxis);
-    
-  var x = d3.scaleBand()
-    .domain(d3.range(12))
-    .range([0,width]);
-    
-  var xAxis = d3.axisBottom()
-    .scale(x)
-    .tickFormat(function(d) { return format(parse(d+1)); });
-    
-  g.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-      .selectAll("text")
-      .attr("text-anchor","end")
-      .attr("transform","rotate(-90)translate(-12,-15)")
-    
-  var rects = g.selectAll("rect")
-    .data(data)
-    .enter()
-    .append("rect")
-    .attr("y",height)
-    .attr("height",0)
-    .attr("width", x.bandwidth()-2 )
-    .attr("x", function(d,i) { return x(i); })
-    .attr("fill","steelblue")
-    .transition()
-    .attr("height", function(d) { return height-y(d); })
-    .attr("y", function(d) { return y(d); })
-    .duration(1000);
-    
-  var title = svg.append("text")
-    .style("font-size", "20px")
-    .text('hola')
-    .attr("x", width/2 + margin.left)
-    .attr("y", 30)
-    .attr("text-anchor","middle");
-    
-  return svg;
-    //console.log(svg);
-}  
-	
 	
 	// get color depending on population density value
 	function getColor(d) {
@@ -323,7 +293,7 @@ function chart(d) {
 		geojson.eachLayer(function(layer) {
 			propertyValue = layer.feature.properties[propertyName];
 			propertyValue = (layer.feature.properties[propertyName]*100000)/layer.feature.properties['pop'];
-			console.log(propertyValue);
+			//console.log(propertyValue);
 
 			// Your function that determines a fill color for a particular
 			// property name and value.
@@ -337,26 +307,58 @@ function chart(d) {
 			});
 		});
 	}
+	
 
-/*
-	geojson = L.geoJson(statesData, {
-		style: style,
-		onEachFeature: onEachFeature
-	}).addTo(map);
+		
+	// CONTROL PARA TOP10
+	var to10control = L.control({position: 'topright'});	
 
-*/
-	// Geojson from file
-	// Cargar GeoJSON desde un archivo externo
-	var geojson = L.geoJson(null, {
-		style: style,
-		onEachFeature: onEachFeature
-	});
+	to10control.onAdd = function (map) {			
+		this._div = L.DomUtil.create('div', 'info'); 
+		//this.update();
+		return this._div;
+	};
+
+
+	to10control.update = function (texto) {
+		this._div.innerHTML = texto;		
+	};	
+	to10control.addTo(map);
+
+	// Cambiar top10 en función de la fecha seleccionada
+	function top10(propertyName) {
+		//to10control.innerHTML = '';	
+		var allCases = [];
+		var oneCase = new Object();
+
+		geojson.eachLayer(function(layer) {
+			propertyValue = layer.feature.properties[propertyName];
+			propertyValue = (layer.feature.properties[propertyName]*100000)/layer.feature.properties['pop'];
+			//console.log(propertyValue);
+			//allCases.push(propertyValue);
+			oneCase = { 'name': layer.feature.properties['name'], 'cases100m': Math.floor(propertyValue), 'pop':layer.feature.properties['pop'] };
+			allCases.push(oneCase);
+		});
+		//console.log(allCases);
+
+		// ALASQL		
+		var top10 = alasql("SELECT name,cases100m,pop FROM ? allCases ORDER BY cases100m DESC LIMIT 10",[allCases]);	 
+		//console.log(top10); 
+		// Definir texto
+		var top10txt = '<h4>TOP 10 COUNTRIES</h4><img src="img/pixel.png" height="1" width="150"><ul>';
+		for (i = 0; i < top10.length; i++) {
+		  top10txt += '<li>'+ (i+1)+ '. ' + top10[i]['name'] + ' '+ top10[i]['cases100m'] + '</li>';
+		}
+				
+		// actualizar 
+		to10control.update( top10txt+'</ul>' );	
+	}
+
 	
 	var start = Date.now();
 
 	url='data/countries_data.geojson'; 
-	d3.json(url).then( function(data) {		 
-	//d3.json(url, function(error, data) { // d3.v3
+	d3.json(url).then( function(data) {	
 		urlcsv = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
 		d3.csv(urlcsv).then( function(csv) {
 		//d3.csv("data/covid19.csv", function(error, csv) {  /d3.v5
@@ -367,18 +369,20 @@ function chart(d) {
 				delete obj['Country/Region']; // Delete old key 
 				return obj; 
 			}); 
-
 			csv.forEach(function(d, i) {
 				//console.log(d);
 				keys = Object.keys(d) ;
 				// rellenar el combo quitando los que no son fecha
-				cols = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );				
+				cols = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );	
+				//console.log(cols.length);	
+				//console.log(cols[cols.length-1]);
+				//lastField = cols[cols.length-1].toString();		
 				$('#datesSel').empty().append('<option selected="selected" value="nothing">(Select a date)</option>');
 				cols.forEach(function(col) {
 					if ( col.substring(col.length - 3, col.length) == '/20'   ) {	
 						$('#datesSel').append($('<option><option/>').val(col).text(col)); 
 					}
-				});				
+				});	
 				
 				// Join entre tablas por key name
 				world.forEach(function(e, j) {
@@ -388,14 +392,17 @@ function chart(d) {
 						Object.assign(e.properties, d); // suma a las propiedades del geojson las del csv
 					}
 				})
-			}); 
-			
+			});
+	
 			geojson = L.geoJson(data, {
 				style: style,
 				onEachFeature: onEachFeature
 			});
 			geojson.addTo(map);
 			//console.log(geojson);
+			console.log('terminado');
+			$('#loader').hide();
+			
 
 		})
 		
@@ -427,12 +434,8 @@ function chart(d) {
 
 	legend.addTo(map);
 
-
-
-
 </script>
-
-
 
 </body>
 </html>
+
