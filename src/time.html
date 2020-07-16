@@ -1,80 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset='utf-8'/>
-    <title></title>
-    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
-</head>
-<body>
-
-<form>
-<label for="contador">Contador:</label>
-<input type="text" id="contador">
-</form>
-
-	
-<div id="texto"></div>
-<script>
-const arr = [10, 12, 15, 21,23,89,41,71,66];
-/*for (let i = 0; i < arr.length; i++) {
-  setTimeout(function() {
-    console.log(i + '- element: ' + arr[i]);
-    document.getElementById("texto").innerHTML = i + '- element: ' + arr[i];
-  }, 2000);
-}
-
-arr.forEach(function(element, i){
-  setTimeout(function(){
-    console.log('Index: ' + i + ', element: ' + element);
-    document.getElementById("texto").innerHTML = i + '- element: ' + arr[i];
-  }, 100)
-})
-*/
-
-
-for (var i = 0; i < arr.length; i++) {
-  setTimeout(function (i) { return function() {
-    console.log('Index: ' + i + ', element: ' + arr[i]);
-    document.getElementById("texto").innerHTML = i + '- element: ' + arr[i];
-  }}(i), 100);
-}
-
-var cont = 0;
-function contador(){
-	var contador = document.getElementById("contador");
-	contador.value = cont;
-	cont++;
-	document.getElementById("texto").innerHTML = cont;
-}
-setInterval('contador()',1000);
-</script>
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!DOCTYPE html>
-<html>
-<head>
 	
 	<title>Covid 19- coropletas</title>
 
@@ -196,49 +122,33 @@ li {
       
 	$('#playVideo').click(function() {
 		var numDias = document.getElementById('datesSel').length;
-		console.log(numDias);
+		//console.log(numDias);
 		tiempo = 20000; // 20 segundos = 20.000 milisegundos
 		tFrame = parseInt(tiempo/numDias);
-		console.log(tFrame);
-		/*var x = document.getElementById("mySelect").selectedIndex;
-		var y = document.getElementById("mySelect").options;
-		alert("Index: " + y[x].index + " is " + y[x].text);*/
-		t = 0;
-		i = 0;
-		var d = Date(Date.now()); 
-		/*while (t < tiempo) {
-			i++			
-			t += tFrame;
-			var y = document.getElementById("datesSel").options;
-			console.log("Index: " + i + " is " + y[i].text + " tiempo: " + t );	
-			setTimeout(restyleLayer(y[i].text),tFrame);
-			//restyleLayer(y[i].text);		
-			
-		}*/
-		
-		
-		for (let count = 0; count < 20000; count++) {
-			i++	
-			t += tFrame;			
-			var y = document.getElementById("datesSel").options;
-			console.log("Index: " + i + " is " + y[i].text + " tiempo: " + t );	
-			
-			//$(#labDate).text( y[i].text );
-			//setTimeout(restyleLayer(y[i].text), 1000 * count);
-			setTimeout(function() {
-				document.getElementById("labDate").innerHTML = y[i].text;
-				restyleLayer(y[i].text);
-			}, tFrame);
 
-		}		
-				
 		
+		/*for (var i = 0; i < numDias; i++) {
+		  setTimeout(function (i) { 
+			  return function() {
+				  let y = document.getElementById("datesSel").options;
+				  document.getElementById("labDate").innerHTML = y[i].text;
+				  restyleLayer(y[i].text);				  
+			  }
+		   }(i), 10000);
+		}*/
+		let i = 0;
+		setTimeout(function run() {
+			cargaVideo(i++);
+			setTimeout(run, tFrame);
+		}, tFrame);	
 		
-  
+
 	});      
       
-    function cargaVideo(fecha) {
-	
+    function cargaVideo(i) {
+		var y = document.getElementById("datesSel").options;
+		document.getElementById("labDate").innerHTML = y[i].text;
+	    restyleLayer(y[i].text);	
 	}  
             
 	$('#datesSel').on('change', function() {
@@ -565,5 +475,4 @@ li {
 
 </body>
 </html>
-
 
