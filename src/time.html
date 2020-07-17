@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -78,7 +79,16 @@ li {
 }
 
 
-
+/* legend */
+.legend span, .legend label {
+  display: block;
+  width: 50px;
+  height: 18px;
+  float: left;
+  opacity: 0.7;
+  text-align: center;
+  font-size: 80%
+}
 
 
 /* fecha (https://cssdeck.com/labs/calendar-icon) */
@@ -565,7 +575,7 @@ time.icon:hover, time.icon:focus
     });//.addTo(map);
     
 	map.attributionControl.addAttribution('Develop by <a href="https://github.com/josemamira.io/covid19maps">Jose Manuel Mira</a> | Covid-19 data &copy; <a href="https://github.com/CSSEGISandData">CSSE at Johns Hopkins University</a>');
-
+/*
 	var legend = L.control({position: 'bottomright'});
 
 	legend.onAdd = function (map) {
@@ -589,6 +599,34 @@ time.icon:hover, time.icon:focus
 	};
 
 	legend.addTo(map);
+*/
+	var legend = L.control({position: 'bottomright'});
+	legend.onAdd = function (map) {
+		var div = L.DomUtil.create('div', 'info legend'),
+			grades = [0, 10, 25, 50, 100, 200, 300, 400, 500],
+			labels = [];
+
+		// loop through our density intervals and generate a label with a colored square for each interval
+		// first loop for colored legend boxes
+		for (var i = 0; i < grades.length; i++) {
+			div.innerHTML +=
+				'<span style="background:' + getColor(grades[i] + 1) + '"></span> ';
+		}
+
+		// a line break
+		div.innerHTML += '<br>';
+
+		// second loop for text
+		for (var i = 0; i < grades.length; i++) {
+			div.innerHTML +=
+				'<label>' + grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] : '+') + '</label>';
+		}
+		return div;
+	};
+
+	legend.addTo(map);
+
+
 
 </script>
 
