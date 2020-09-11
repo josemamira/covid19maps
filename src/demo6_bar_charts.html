@@ -139,6 +139,7 @@ d3.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/c
 });
 
 function grafico(data, title){
+	console.log(data);
 	
     var locale = d3.timeFormatDefaultLocale({      
 		"decimal": ",",
@@ -179,36 +180,14 @@ function grafico(data, title){
         .style("text-decoration", "underline")  
         .text(title);
 
-	var x = d3.scaleBand()
-		.rangeRound([0, width])
-		.padding(0.1);
 
+// EJE Y
 	var y = d3.scaleLinear()	
 	.rangeRound([height, 0]);
-	
-	// Fechas	
-    var parseTime = d3.timeParse("%Y-%m-%d");
-    //var format = locale.format("%d-%b-%Y"); Devuelve 04-Abr-2020
-    //var format = locale.format("%d-%b");    Devuelve 04-Abr
-    //var format = locale.format("%d-%m-%Y"); Devuelve 04-4-2020
-    var format = locale.format("%d-%m"); //Devuelve 16/04
-    //x.domain(data.map(function (d) { return parseTime(d.nombre);	}));
-    x.domain(data.map(function (d) { return format(parseTime(d.nombre));	}));
 
 	y.domain([0, d3.max(data, function (d) {
 				return Number(d.valores);
 			})]);
-
-	g.append("g")
-	.attr("transform", "translate(0," + height + ")")
-	
-	.call(d3.axisBottom(x))
-	.selectAll("text")
-    .attr("y", 0)
-    .attr("x", 9)
-    .attr("dy", ".35em")
-    .attr("transform", "rotate(90)")
-    .style("text-anchor", "start");
 
 	g.append("g")
 	.call(d3.axisLeft(y))
@@ -219,6 +198,35 @@ function grafico(data, title){
 	.attr("dy", "0.71em")
 	.attr("text-anchor", "end")
 	.text("Cases");
+	
+// EJE X
+	// Fechas	
+    var parseTime = d3.timeParse("%Y-%m-%d");
+    //var format = locale.format("%d-%b-%Y"); Devuelve 04-Abr-2020
+    //var format = locale.format("%d-%b");    Devuelve 04-Abr
+    //var format = locale.format("%d-%m-%Y"); Devuelve 04-4-2020
+    var format = locale.format("%d-%m-%y"); //Devuelve 16/04
+    
+    // Eje X (fechas)
+	var x = d3.scaleBand()
+	  .domain(data.map(function (d) { return format(parseTime(d.nombre));	}))
+	  .rangeRound([0, width])
+	  .padding(0.1);
+
+	var xAxis = d3.axisBottom(x)
+	  .tickValues(x.domain().filter(function(d,i){ return !(i%10)}));
+
+	// Eje X	
+	g.append("g").call(xAxis)
+	.attr("transform", "translate(0," + height + ")")	// coloca el eje abajo
+	.selectAll("text")
+    .attr("y", 0)
+    .attr("x", 9)
+    .attr("dy", ".35em")
+    .attr("transform", "rotate(90)") // rota el texto
+    .style("text-anchor", "start");	
+	
+
 
 	// lineas horizontales 
 	g.append("g")
@@ -228,10 +236,13 @@ function grafico(data, title){
               .tickFormat("")
       );
 
+	// Barras
 	g.selectAll(".bar")
 	.data(data)
 	.enter().append("rect")
 	//.attr("class", "bar") // azul
+	
+	// Poner cada barra del color en función del valor
 	.attr("fill", function(d) {
 		return  d.valores > 100000 ? '#800026' :
 					d.valores > 50000  ? '#BD0026' :
@@ -242,14 +253,10 @@ function grafico(data, title){
 					d.valores > 1000   ? '#FED976' :
 										  '#FFEDA0';
 	  })
-
-
 	.attr("x", function (d) {
 		//return x(d.nombre);
 		return x( format(parseTime(d.nombre)) );
-	})
-		
-	
+	})	
 	.attr("y", function (d) {
 		return y(Number(d.valores));
 	})
@@ -257,6 +264,9 @@ function grafico(data, title){
 	.attr("height", function (d) {
 		return height - y(Number(d.valores));
 	});
+	
+
+	
 
 }
 
