@@ -194,7 +194,7 @@ time.icon:hover, time.icon:focus
 </style>
 </head>
 <body>
-<div id="loader" class="loader"></div>
+<div id='loader' class='loader'></div>
 <div id='map'></div>
 
 
@@ -216,8 +216,8 @@ time.icon:hover, time.icon:focus
 	L.control.custom({
 		position: 'topleft',
 		content : '<div class="input-group">'+
-					'<label for="exampleFormControlSelect1">Select a date: </label>'+
-						'<select class="form-control" id="datesSel"><option>SELECT A DATE</option></select>'+
+					'<label for="exampleFormControlSelect1">Selecciona una fecha: </label>'+
+						'<select class="form-control" id="datesSel"><option>SELECCIONA UNA FECHA</option></select>'+
 						'<button type="button" id="playVideo" class="btn btn-default">'+
                           '    <i class="fa fa-play"></i></button>'+
                         '<div id="labDate"></div>'+
@@ -239,16 +239,6 @@ time.icon:hover, time.icon:focus
 		tiempo = 20000; // 20 segundos = 20.000 milisegundos
 		tFrame = parseInt(tiempo/numDias);
 
-		
-		/*for (var i = 0; i < numDias; i++) {
-		  setTimeout(function (i) { 
-			  return function() {
-				  let y = document.getElementById("datesSel").options;
-				  document.getElementById("labDate").innerHTML = y[i].text;
-				  restyleLayer(y[i].text);				  
-			  }
-		   }(i), 10000);
-		}*/
 		let i = 0;
 		setTimeout(function run() {
 			cargaVideo(i++);
@@ -261,9 +251,9 @@ time.icon:hover, time.icon:focus
     function cargaVideo(i) {
 		// Fecha del calendario
 		var y = document.getElementById("datesSel").options;
-		mes = y[i].text.split('/')[0];
-		dia = y[i].text.split('/')[1];
-		ano = y[i].text.split('/')[2];
+		ano = y[i].text.split('-')[0];
+		mes = y[i].text.split('-')[1];
+		dia = y[i].text.split('-')[2];
 		var months = [
 			'Jan', 'Feb', 'Mar', 'Apr', 'May',
 			'Jun', 'Jul', 'Aug', 'Sep',
@@ -274,13 +264,14 @@ time.icon:hover, time.icon:focus
 			'Oct', 'Nov', 'Dic'
 			];
 		function monthNumToName(monthnum) {
-			return months[monthnum - 1] ;
+			console.log(monthnum);
+			return months[parseInt(monthnum) - 1] ;
 		}
-		function mesesNum2Nombre(monthnum) {
-			return meses[monthnum - 1] ;
+		function mesesNum2Nombre(monthnum) {			
+			return meses[parseInt(monthnum) - 1] ;
 		}
-		console.log(monthNumToName(mes));
-		var newCal = '<time class="icon"><em>'+'20'+ano+'</em><strong>'+ monthNumToName(mes) +'</strong><span>'+dia+'</span></time>';
+		//console.log(monthNumToName(mes));
+		var newCal = '<time class="icon"><em>'+ano+'</em><strong>'+ monthNumToName(parseInt(mes)) +'</strong><span>'+parseInt(dia)+'</span></time>';
 		
 		
 		
@@ -326,8 +317,12 @@ time.icon:hover, time.icon:focus
 		//console.log(obj);
 		//console.log( Object.entries(obj) );
 		var keys = Object.keys(obj);
+		console.log(keys)
 		// filtrado para quedarse solo con keys de fecha
-		keys = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );
+		//keys = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );
+		keys = keys.filter(key => key.indexOf("2020",0) == 0 && key.substring(0,5) == '2020-');
+		
+		//console.log(keys);
 		// obtener un array de valores de las fechas
 		values =[]
 		for (var i = 0; i < keys.length; i++) {
@@ -337,15 +332,16 @@ time.icon:hover, time.icon:focus
 		var casos = [];
 		for (var i = 0; i < keys.length; i++) {
 			//var caso = {  date: keys[i],  value: values[i]	};
-			var caso = {  date: d3.timeParse("%m/%d/%Y")(keys[i]),  value: values[i]	};
+			//var caso = {  date: d3.timeParse("%m/%d/%Y")(keys[i]),  value: values[i]	};
+			var caso = {  date: d3.timeParse("%Y-%m-%d")(keys[i]),  value: values[i]	};
 			casos.push(caso);
 		}	
 
 		lastDate = keys[keys.length - 1];
-		this._div.innerHTML = '<h4>COVID-19</h4>' +  (props ?
-			props.name +' cases every 100.000 people:<strong> ' + (((Number(props[lastDate]))*100000)/props.pop).toFixed(2) + '</strong><br>'+
+		this._div.innerHTML = '<h4>COVID-19</h4><strong>' +  (props ?
+			props.name +' </strong> casos cada 100.000 personas:<strong> ' + (((Number(props[lastDate]))*100000)/props.pop).toFixed(2) + '</strong><br>'+
 			'<div id="chart"></div>'
-			: 'Hover over a country');
+			: '+ Info: Rat&oacute;n encima de cada provincia');
 		//chart(values);
 		lineChart(casos);
 		
@@ -468,7 +464,7 @@ time.icon:hover, time.icon:focus
 
 		geojson.eachLayer(function(layer) {
 			propertyValue = layer.feature.properties[propertyName];
-			propertyValue = (layer.feature.properties[propertyName]*100000)/layer.feature.properties['pop'];
+			//propertyValue = (layer.feature.properties[propertyName]*100000)/layer.feature.properties['pop'];
 			//console.log(propertyValue);
 
 			// Your function that determines a fill color for a particular
@@ -509,10 +505,10 @@ time.icon:hover, time.icon:focus
 
 		geojson.eachLayer(function(layer) {
 			propertyValue = layer.feature.properties[propertyName];
-			propertyValue = (layer.feature.properties[propertyName]*100000)/layer.feature.properties['POB'];
+			propertyValue = (layer.feature.properties[propertyName]*100000)/layer.feature.properties['pop'];
 			//console.log(propertyValue);
 			//allCases.push(propertyValue);
-			oneCase = { 'name': layer.feature.properties['name'], 'cases100m': Math.floor(propertyValue), 'POB':layer.feature.properties['POB'], 'iso2':layer.feature.properties['iso2'] };
+			oneCase = { 'name': layer.feature.properties['name'], 'cases100m': Math.floor(propertyValue), 'pop':layer.feature.properties['pop'], 'iso2':layer.feature.properties['iso2'] };
 			allCases.push(oneCase);
 		});
 		console.log(allCases);
@@ -550,18 +546,20 @@ time.icon:hover, time.icon:focus
 				//console.log(d);
 				keys = Object.keys(d) ;
 				// rellenar el combo quitando los que no son fecha
-				cols = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );	
-				//console.log(cols.length);	
+				//cols = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );	
+				cols = keys.filter(key => key.indexOf("2020") == 0 && key.substring(0,5)== '2020-');
+				//console.log(cols);	
 				//console.log(cols[cols.length-1]);
 				//lastField = cols[cols.length-1].toString();		
-				$('#datesSel').empty().append('<option selected="selected" value="nothing">(Select a date)</option>');
+				$('#datesSel').empty().append('<option selected="selected" value="nothing">(Selecciona una fecha)</option>');
 				cols.forEach(function(col) {
-					if ( col.substring(col.length - 3, col.length) == '/20'   ) {	
+					//console.log(col);
+					if ( col.substring(0, 5) == '2020-'   ) {	
 						$('#datesSel').append($('<option><option/>').val(col).text(col)); 
 					}
 				});	
 				
-				// Join entre tablas por key CODIGO
+				// Join entre tablas por key codigo
 				geo.forEach(function(e, j) {
 					if(e.properties.codigo === d.codigo ) {
 						//console.log('coinciden');
