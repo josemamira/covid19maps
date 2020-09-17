@@ -539,11 +539,11 @@ time.icon:hover, time.icon:focus
 		var oneCase = new Object();
 
 		geojson.eachLayer(function(layer) {
-			//propertyValue = layer.feature.properties[propertyName];
-			propertyValue = (layer.feature.properties[propertyName]*100000)/layer.feature.properties['pop'];
+			propertyValue = layer.feature.properties[propertyName];
+			//propertyValue = (layer.feature.properties[propertyName]*100000)/layer.feature.properties['pop'];
 			//console.log(propertyValue);
 			//allCases.push(propertyValue);
-			oneCase = { 'name': layer.feature.properties['name'], 'cases100m': Math.floor(propertyValue), 'pop':layer.feature.properties['pop'], 'iso2':layer.feature.properties['cod_ccaa'] };
+			oneCase = { 'name': layer.feature.properties['name'], 'cases': Math.floor(propertyValue), 'pop':layer.feature.properties['pop'], 'iso2':layer.feature.properties['cod_ccaa'] };
 			//oneCase = { 'name': layer.feature.properties['name'], 'cases100m': Math.floor(propertyValue), 'pop':layer.feature.properties['pop'] };
 			allCases.push(oneCase);
 		});
@@ -551,7 +551,7 @@ time.icon:hover, time.icon:focus
 
 		// ALASQL		
 		//var top5 = alasql("SELECT name,cases100m,pop FROM ? allCases ORDER BY cases100m DESC LIMIT 10",[allCases]);
-		var top5 = alasql("SELECT name,cases100m,pop,iso2 FROM ? allCases WHERE cases100m > 0  ORDER BY cases100m DESC LIMIT 5",[allCases]);
+		var top5 = alasql("SELECT name,cases,pop,iso2 FROM ? allCases WHERE cases > 0  ORDER BY cases DESC LIMIT 5",[allCases]);
 		//var top5 = alasql("SELECT name,cases100m,pop FROM ? allCases WHERE cases100m > 0  ORDER BY cases100m DESC LIMIT 5",[allCases]);	 
 		console.log(top5); 
 		// Definir texto
