@@ -373,7 +373,7 @@ time.icon:hover, time.icon:focus
 		}	
 
 		lastDate = keys[keys.length - 1];
-		this._div.innerHTML = '<h4>COVID-19</h4><strong>' +  (props ?
+		this._div.innerHTML = '<h4>COVID-19: CONTAGIOS DIARIOS</h4><strong>' +  (props ?
 			props.name +' </strong> casos cada 100.000 personas:<strong> ' + (((Number(props[lastDate]))*100000)/props.pop).toFixed(2) + '</strong><br>'+
 			'<div id="chart"></div>'
 			: '+ Info: Rat&oacute;n encima de cada provincia');
@@ -656,4 +656,4 @@ time.icon:hover, time.icon:focus
 </script>
 
 </body>
-</html> 
+</html>
