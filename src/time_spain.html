@@ -3,7 +3,7 @@
 <html>
 <head>
 	
-	<title>Covid 19- New cases in Spain (by provinces)</title>
+	<title>Covid 19- Contagios diarios (por provincias)</title>
 
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -200,7 +200,8 @@ time.icon:hover, time.icon:focus
 
 <script type="text/javascript">
 
-	/*var map = L.map('map').setView([36, -3], 5);
+// Opción una sola capa
+	var map = L.map('map').setView([36, -3], 5);
 
 	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
 		maxZoom: 18,
@@ -210,11 +211,10 @@ time.icon:hover, time.icon:focus
 		id: 'mapbox/light-v9',
 		tileSize: 512,
 		zoomOffset: -1
-	}).addTo(map);*/
-	
-	
-	
-	
+	}).addTo(map);
+
+// opción 2 capas de fondo para elegir en control layers
+/*	
 	var clear = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
 	  attribution: '<a href="htpps://github.josema.mira">Jose Manuel Mira</a> '+
 	  '| <a href="https://systems.jhu.edu/research/public-health/ncov/">JHU CSSE</a> '
@@ -245,16 +245,7 @@ time.icon:hover, time.icon:focus
 	};
 	
 	L.control.layers(baseMaps).addTo(map);	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+*/	
 	
 	// Select fechas
 	L.control.custom({
@@ -329,7 +320,7 @@ time.icon:hover, time.icon:focus
 	$('#datesSel').on('change', function() {
 	  //alert( this.value );
 	  restyleLayer(this.value);
-	  top10(this.value)
+	  top5(this.value)
 	  
 	});
 	
@@ -526,23 +517,23 @@ time.icon:hover, time.icon:focus
 	
 
 		
-	// CONTROL PARA TOP10
-	var to10control = L.control({position: 'topright'});	
+	// CONTROL PARA TOP5
+	var to5control = L.control({position: 'topright'});	
 
-	to10control.onAdd = function (map) {			
+	to5control.onAdd = function (map) {			
 		this._div = L.DomUtil.create('div', 'info'); 
 		//this.update();
 		return this._div;
 	};
 
 
-	to10control.update = function (texto) {
+	to5control.update = function (texto) {
 		this._div.innerHTML = texto;		
 	};	
-	to10control.addTo(map);
+	to5control.addTo(map);
 
-	// Cambiar top10 en función de la fecha seleccionada
-	function top10(propertyName) {
+	// Cambiar top5 en función de la fecha seleccionada
+	function top5(propertyName) {
 		//to10control.innerHTML = '';	
 		var allCases = [];
 		var oneCase = new Object();
@@ -552,23 +543,24 @@ time.icon:hover, time.icon:focus
 			propertyValue = (layer.feature.properties[propertyName]*100000)/layer.feature.properties['pop'];
 			//console.log(propertyValue);
 			//allCases.push(propertyValue);
-			oneCase = { 'name': layer.feature.properties['name'], 'cases100m': Math.floor(propertyValue), 'pop':layer.feature.properties['pop'], 'iso2':layer.feature.properties['iso2'] };
+			oneCase = { 'name': layer.feature.properties['name'], 'cases100m': Math.floor(propertyValue), 'pop':layer.feature.properties['pop'] };
 			allCases.push(oneCase);
 		});
 		//console.log(allCases);
 
 		// ALASQL		
-		//var top10 = alasql("SELECT name,cases100m,pop FROM ? allCases ORDER BY cases100m DESC LIMIT 10",[allCases]);
-		var top10 = alasql("SELECT name,cases100m,pop,iso2 FROM ? allCases WHERE cases100m > 0 AND pop > 2000000 ORDER BY cases100m DESC LIMIT 10",[allCases]);	 
-		//console.log(top10); 
+		//var top5 = alasql("SELECT name,cases100m,pop FROM ? allCases ORDER BY cases100m DESC LIMIT 10",[allCases]);
+		var top5 = alasql("SELECT name,cases100m,pop FROM ? allCases WHERE cases100m > 0 AND pop > 2000000 ORDER BY cases100m DESC LIMIT 5",[allCases]);	 
+		//console.log(top5); 
 		// Definir texto
-		var top10txt = '<h4>TOP 10 PROVINCES</h4><img src="img/pixel.png" height="1" width="150"><ul>';
-		for (i = 0; i < top10.length; i++) {
-		  top10txt += '<li>'+ (i+1)+ '. ' + '<img src="https://www.countryflags.io/'+top10[i]['iso2'].toLowerCase()+'/flat/16.png"> ' + top10[i]['name'] + ' '+ top10[i]['cases100m'] + '</li>';
+		var top5txt = '<h4>TOP 5 PROVINCIAS</h4><img src="img/pixel.png" height="1" width="150"><ul>';
+		for (i = 0; i < top5.length; i++) {
+		  //top5txt += '<li>'+ (i+1)+ '. ' + '<img src="https://www.countryflags.io/'+top5[i]['iso2'].toLowerCase()+'/flat/16.png"> ' + top5[i]['name'] + ' '+ top5[i]['cases100m'] + '</li>';
+		  top5txt += '<li>'+ (i+1)+ '. ' + top5[i]['name'] + ' '+ top5[i]['cases100m'] + '</li>';
 		}
 				
 		// actualizar 
-		to10control.update( top10txt+'</ul>' );	
+		to5control.update( top5txt+'</ul>' );	
 	}
 
 	
@@ -628,31 +620,7 @@ time.icon:hover, time.icon:focus
     });//.addTo(map);
     
 	map.attributionControl.addAttribution('Develop by <a href="https://github.com/josemamira.io/covid19maps">Jose Manuel Mira</a> | Covid-19 data &copy; <a href="https://github.com/CSSEGISandData">CSSE at Johns Hopkins University</a>');
-/*
-	var legend = L.control({position: 'bottomright'});
 
-	legend.onAdd = function (map) {
-
-		var div = L.DomUtil.create('div', 'info legend'),
-			grades = [0, 10, 25, 50, 100, 200, 300, 400, 500],
-			labels = [],
-			from, to;
-
-		for (var i = 0; i < grades.length; i++) {
-			from = grades[i];
-			to = grades[i + 1];
-
-			labels.push(
-				'<i style="background:' + getColor(from + 1) + '"></i> ' +
-				from + (to ? '&ndash;' + to : '+'));
-		}
-
-		div.innerHTML = '<p>Cases per 100.000 people</p>'+labels.join('<br>');
-		return div;
-	};
-
-	legend.addTo(map);
-*/
 	var legend = L.control({position: 'bottomright'});
 	legend.onAdd = function (map) {
 		var div = L.DomUtil.create('div', 'info legend'),
