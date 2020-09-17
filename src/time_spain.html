@@ -200,7 +200,7 @@ time.icon:hover, time.icon:focus
 
 <script type="text/javascript">
 
-	var map = L.map('map').setView([36, -3], 5);
+	/*var map = L.map('map').setView([36, -3], 5);
 
 	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
 		maxZoom: 18,
@@ -210,7 +210,51 @@ time.icon:hover, time.icon:focus
 		id: 'mapbox/light-v9',
 		tileSize: 512,
 		zoomOffset: -1
-	}).addTo(map);
+	}).addTo(map);*/
+	
+	
+	
+	
+	var clear = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+	  attribution: '<a href="htpps://github.josema.mira">Jose Manuel Mira</a> '+
+	  '| <a href="https://systems.jhu.edu/research/public-health/ncov/">JHU CSSE</a> '
+	});
+    var dark   = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: '<a href="https://www.openstreetmap.org/">OpenStreetMap</a>' +
+		' | <a href="https://www.mapbox.com/">Mapbox</a> ',
+		id: 'mapbox/dark-v9',
+		tileSize: 512,
+		zoomOffset: -1
+	});
+	var dark2 = L.tileLayer('&copy; https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+		attribution: '&copy; <a href="https://systems.jhu.edu/research/public-health/ncov/">JHU CSSE</a>&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+		subdomains: 'abcd',
+		maxZoom: 19
+	});
+	
+	//var map = L.map('map').setView([0,0], 2);
+	var map = L.map('map', {
+    center: [36, -3],
+    zoom: 5,
+    layers: [dark, clear]
+});
+	var baseMaps = {
+		"Dark": dark,
+		"Clear": clear
+	};
+	
+	L.control.layers(baseMaps).addTo(map);	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	// Select fechas
 	L.control.custom({
@@ -264,7 +308,7 @@ time.icon:hover, time.icon:focus
 			'Oct', 'Nov', 'Dic'
 			];
 		function monthNumToName(monthnum) {
-			console.log(monthnum);
+			//console.log(monthnum);
 			return months[parseInt(monthnum) - 1] ;
 		}
 		function mesesNum2Nombre(monthnum) {			
@@ -317,7 +361,7 @@ time.icon:hover, time.icon:focus
 		//console.log(obj);
 		//console.log( Object.entries(obj) );
 		var keys = Object.keys(obj);
-		console.log(keys)
+		//console.log(keys)
 		// filtrado para quedarse solo con keys de fecha
 		//keys = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );
 		keys = keys.filter(key => key.indexOf("2020",0) == 0 && key.substring(0,5) == '2020-');
@@ -511,7 +555,7 @@ time.icon:hover, time.icon:focus
 			oneCase = { 'name': layer.feature.properties['name'], 'cases100m': Math.floor(propertyValue), 'pop':layer.feature.properties['pop'], 'iso2':layer.feature.properties['iso2'] };
 			allCases.push(oneCase);
 		});
-		console.log(allCases);
+		//console.log(allCases);
 
 		// ALASQL		
 		//var top10 = alasql("SELECT name,cases100m,pop FROM ? allCases ORDER BY cases100m DESC LIMIT 10",[allCases]);
