@@ -1,0 +1,659 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<title>Covid 19- Contagios diarios (por provincias)</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-173008932-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-173008932-1');
+</script>
+	
+	
+	
+	<!-- FONT AWESOME CDN -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/d3.v5.js" charset="utf-8"></script>
+    <script src="js/alasql.min.js"></script>
+    <!-- control -->
+	<script src="js/Leaflet.Control.Custom.js"></script>
+
+<style>
+body {
+    padding: 0;
+    margin: 0;
+}
+html, body, #map {
+    height: 100%;
+    width: 100vw;
+}
+.info { width: auto !important; 
+	padding: 6px 8px; 
+	font: 14px/16px Arial, Helvetica, sans-serif; 
+	background: white; 
+	background: rgba(255,255,255,0.8); 
+	box-shadow: 0 0 15px rgba(0,0,0,0.2); 
+	border-radius: 5px; } 
+.info h4 { margin: 0 0 5px; color: #777; }
+.legend { text-align: left; line-height: 18px; color: #555; } 
+.legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+
+/* loader icon  */
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index:2;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+/* fin loader icon */
+
+/* css */
+ul {
+  list-style: none;
+  padding: 0;
+}
+li {
+  padding: 5px 10px;
+  background-color: #EEEEEE;
+  border: 1px solid #DDDDDD;
+}
+
+
+/* legend */
+.legend span, .legend label {
+  display: block;
+  width: 50px;
+  height: 18px;
+  float: left;
+  opacity: 0.7;
+  text-align: center;
+  font-size: 80%
+}
+
+
+/* fecha (https://cssdeck.com/labs/calendar-icon) */
+time.icon
+{
+  font-size: 0.8em; /* change icon size */
+  font-family: "Helvetica Neue Bold", arial, helvetica, sans-serif;
+  display: block;
+  position: relative;
+  width: 7em;
+  height: 7em;
+  background-color: #fff;
+  margin: 2em auto;
+  border-radius: 0.6em;
+  box-shadow: 0 1px 0 #bdbdbd, 0 2px 0 #fff, 0 3px 0 #bdbdbd, 0 4px 0 #fff, 0 5px 0 #bdbdbd, 0 0 0 1px #bdbdbd;
+  overflow: hidden;
+  -webkit-backface-visibility: hidden;
+  -webkit-transform: rotate(0deg) skewY(0deg);
+  -webkit-transform-origin: 50% 10%;
+  transform-origin: 50% 10%;
+}
+
+time.icon *
+{
+  display: block;
+  width: 100%;
+  font-size: 1em;
+  font-weight: bold;
+  font-style: normal;
+  text-align: center;
+}
+
+time.icon strong
+{
+  position: absolute;
+  top: 0;
+  padding: 0.4em 0;
+  color: #fff;
+  background-color: #fd9f1b;
+  border-bottom: 1px dashed #f37302;
+  box-shadow: 0 2px 0 #fd9f1b;
+}
+
+time.icon em
+{
+  position: absolute;
+  bottom: 0.3em;
+  color: #fd9f1b;
+}
+
+time.icon span
+{
+  width: 100%;
+  font-size: 3.2em;
+  letter-spacing: -0.05em;
+  padding-top: 0.6em;
+  color: #2f2f2f;
+}
+
+time.icon:hover, time.icon:focus
+{
+  -webkit-animation: swing 0.6s ease-out;
+  animation: swing 0.6s ease-out;
+}
+
+@-webkit-keyframes swing {
+  0%   { -webkit-transform: rotate(0deg)  skewY(0deg); }
+  20%  { -webkit-transform: rotate(12deg) skewY(4deg); }
+  60%  { -webkit-transform: rotate(-9deg) skewY(-3deg); }
+  80%  { -webkit-transform: rotate(6deg)  skewY(-2deg); }
+  100% { -webkit-transform: rotate(0deg)  skewY(0deg); }
+}
+
+@keyframes swing {
+  0%   { transform: rotate(0deg)  skewY(0deg); }
+  20%  { transform: rotate(12deg) skewY(4deg); }
+  60%  { transform: rotate(-9deg) skewY(-3deg); }
+  80%  { transform: rotate(6deg)  skewY(-2deg); }
+  100% { transform: rotate(0deg)  skewY(0deg); }
+}
+/* fin fecha */
+
+
+
+
+
+
+
+
+
+
+</style>
+</head>
+<body>
+<div id='loader' class='loader'></div>
+<div id='map'></div>
+
+
+<script type="text/javascript">
+
+// Opción una sola capa
+	var map = L.map('map').setView([36, -3], 5);
+
+	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox/light-v9',
+		tileSize: 512,
+		zoomOffset: -1
+	}).addTo(map);
+
+	
+	// Select fechas
+	L.control.custom({
+		position: 'topleft',
+		content : '<div class="input-group">'+
+					'<label for="exampleFormControlSelect1">Selecciona una fecha: </label>'+
+						'<select class="form-control" id="datesSel"><option>SELECCIONA UNA FECHA</option></select>'+
+						'<button type="button" id="playVideo" class="btn btn-default">'+
+                          '    <i class="fa fa-play"></i></button>'+
+                        '<div id="labDate"></div>'+
+					'</div>',
+		classes : '',
+		style   :
+		{
+			position: 'absolute',
+			left: '50px',
+			top: '0px',
+			width: '200px',
+		},
+	}).addTo(map);
+            
+      
+	$('#playVideo').click(function() {
+		var numDias = document.getElementById('datesSel').length;
+		//console.log(numDias);
+		tiempo = 20000; // 20 segundos = 20.000 milisegundos
+		tFrame = parseInt(tiempo/numDias);
+
+		let i = 0;
+		setTimeout(function run() {
+			cargaVideo(i++);
+			setTimeout(run, tFrame);
+		}, tFrame);	
+		
+
+	});      
+      
+    function cargaVideo(i) {
+		// Fecha del calendario
+		var y = document.getElementById("datesSel").options;
+		ano = y[i].text.split('-')[0];
+		mes = y[i].text.split('-')[1];
+		dia = y[i].text.split('-')[2];
+		var months = [
+			'Jan', 'Feb', 'Mar', 'Apr', 'May',
+			'Jun', 'Jul', 'Aug', 'Sep',
+			'Oct', 'Nov', 'Dec'
+			];
+		var meses = [ 'Ene', 'Feb', 'Mar', 'Abr', 'May',
+			'Jun', 'Jul', 'Ago', 'Sep',
+			'Oct', 'Nov', 'Dic'
+			];
+		function monthNumToName(monthnum) {
+			//console.log(monthnum);
+			return months[parseInt(monthnum) - 1] ;
+		}
+		function mesesNum2Nombre(monthnum) {			
+			return meses[parseInt(monthnum) - 1] ;
+		}
+		//console.log(monthNumToName(mes));
+		var newCal = '<time class="icon"><em>'+ano+'</em><strong>'+ monthNumToName(parseInt(mes)) +'</strong><span>'+parseInt(dia)+'</span></time>';
+		
+		
+		
+		
+		//document.getElementById("labDate").innerHTML = y[i].text;
+		document.getElementById("labDate").innerHTML = newCal
+		
+	    restyleLayer(y[i].text);	
+	}  
+            
+	$('#datesSel').on('change', function() {
+	  //alert( this.value );
+	  restyleLayer(this.value);
+	  top5(this.value)
+	  
+	});
+	
+	// delete duplicates
+	$( '#datesSel').focus(function() {
+		var optionValues =[];
+		$('#datesSel option').each(function(){
+		   if($.inArray(this.value, optionValues) >-1){
+			  $(this).remove()
+		   }else{
+			  optionValues.push(this.value);
+		   }
+		});
+	});
+
+
+
+	// control that shows state info on hover
+	var info = L.control({position: 'bottomleft'});
+
+	info.onAdd = function (map) {
+		this._div = L.DomUtil.create('div', 'info');
+		this.update();
+		return this._div;
+	};
+
+	info.update = function (props) {
+		obj = Object(props);
+		//console.log(obj);
+		//console.log( Object.entries(obj) );
+		var keys = Object.keys(obj);
+		//console.log(keys)
+		// filtrado para quedarse solo con keys de fecha
+		//keys = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );
+		keys = keys.filter(key => key.indexOf("2020",0) == 0 && key.substring(0,5) == '2020-');
+		
+		//console.log(keys);
+		// obtener un array de valores de las fechas
+		values =[]
+		for (var i = 0; i < keys.length; i++) {
+			values.push( Number(props[keys[i]]) );
+		}
+		
+		var casos = [];
+		for (var i = 0; i < keys.length; i++) {
+			//var caso = {  date: keys[i],  value: values[i]	};
+			//var caso = {  date: d3.timeParse("%m/%d/%Y")(keys[i]),  value: values[i]	};
+			var caso = {  date: d3.timeParse("%Y-%m-%d")(keys[i]),  value: values[i]	};
+			casos.push(caso);
+		}	
+
+		lastDate = keys[keys.length - 2]; // el 2 es para que se vaya a la penúltima fecha. La última esta vacía¿?
+		this._div.innerHTML = '<h4>COVID-19: CONTAGIOS ACUMULADO (x 100M hab)</h4><strong>' +  (props ?
+			props.name +' </strong> casos cada 100.000 personas:<strong> ' + (((Number(props[lastDate]))*100000)/props.pop).toFixed(2) + '</strong><br>'+
+			'<div id="chart"></div>'
+			: '+ Info: Rat&oacute;n encima de cada provincia');
+		//chart(values);
+		lineChart(casos);
+		
+	};
+
+	info.addTo(map);
+
+  function lineChart(data) {
+	  // set the dimensions and margins of the graph
+		var margin = {top: 10, right: 30, bottom: 60, left: 60},
+			width = 300 - margin.left - margin.right,
+			height = 200 - margin.top - margin.bottom;
+
+		// append the svg object to the body of the page
+		var svg = d3.select("#chart")
+		  .append("svg")
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+		  .append("g")
+			.attr("transform",
+				  "translate(" + margin.left + "," + margin.top + ")");
+    // Add X axis --> it is a date format
+    var x = d3.scaleTime()
+      .domain(d3.extent(data, function(d) { return d.date; }))
+      .range([ 0, width ]);
+    svg.append("g")
+      .attr("transform", "translate(0," + height + ")")            
+      .call(d3.axisBottom(x))   
+       .selectAll("text")
+		.attr("y", 0)
+		.attr("x", 9)
+		.attr("dy", ".35em")
+		.attr("transform", "rotate(90)")
+		.style("text-anchor", "start") ;  
+
+      
+    // Add Y axis
+    var y = d3.scaleLinear()
+      .domain([0, d3.max(data, function(d) { return +d.value; })])
+      .range([ height, 0 ]);
+    svg.append("g")
+      .call(d3.axisLeft(y));
+
+    // Add the line
+    svg.append("path")
+      .datum(data)
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 1.5)
+      .attr("d", d3.line()
+        .x(function(d) { return x(d.date) })
+        .y(function(d) { return y(d.value) })
+        )
+
+}
+
+	
+	// get color depending on population density value
+	function getColor(d) {    // grades =   [0, 25, 50, 100, 250, 500, 1000, 1500, 2000]
+		 return d > 2000  ? '#440026' :
+		        d > 1500  ? '#800026' :
+				d > 1000  ? '#BD0026' :
+				d > 500  ? '#E31A1C' :
+				d > 250  ? '#FC4E2A' :
+				d > 100   ? '#FD8D3C' :
+				d > 50   ? '#FEB24C' :
+				d > 25   ? '#FED976' :
+						   '#FFEDA0' ;
+	}
+
+	function style(feature) {
+		return {
+			weight: 2,
+			opacity: 1,
+			color: 'white',
+			//dashArray: '3',
+			fillOpacity: 0.7,
+			fillColor: getColor(feature.properties.densidad)
+		};
+	}
+
+	function highlightFeature(e) {
+		var layer = e.target;
+
+		layer.setStyle({
+			//weight: 2,
+			//color: '#666', // color borde cuando el mouse está encima
+			//dashArray: '',
+			fillOpacity: 0.7
+		});
+
+		if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+			layer.bringToFront();
+		}
+
+		info.update(layer.feature.properties);
+	}
+
+	//var geojson;
+
+	function resetHighlight(e) {
+		geojson.resetStyle(e.target);
+		info.update();
+	}
+
+	function zoomToFeature(e) {
+		map.fitBounds(e.target.getBounds());
+	}
+
+	function onEachFeature(feature, layer) {
+		layer.on({
+			mouseover: highlightFeature,
+			//mouseout: resetHighlight,
+			click: zoomToFeature
+		});
+	}
+	
+	//https://stackoverflow.com/questions/25773389/changing-the-style-of-each-feature-in-a-leaflet-geojson-layer
+	function restyleLayer(propertyName) {
+
+		geojson.eachLayer(function(layer) {
+			//propertyValue = layer.feature.properties[propertyName];
+			propertyValue = (layer.feature.properties[propertyName]*100000)/layer.feature.properties['pop'];
+			//console.log(propertyValue);
+
+			// Your function that determines a fill color for a particular
+			// property name and value.
+			//var myFillColor = getColor(propertyName, propertyValue);
+			var myFillColor = getColor(propertyValue);
+
+			layer.setStyle({
+				fillColor: myFillColor,
+				fillOpacity: 0.8,
+				weight: 0.5
+			});
+		});
+	}
+	
+
+		
+	// CONTROL PARA TOP5
+	var to5control = L.control({position: 'topright'});	
+
+	to5control.onAdd = function (map) {			
+		this._div = L.DomUtil.create('div', 'info'); 
+		//this.update();
+		return this._div;
+	};
+
+
+	to5control.update = function (texto) {
+		this._div.innerHTML = texto;		
+	};	
+	to5control.addTo(map);
+
+	// Cambiar top5 en función de la fecha seleccionada
+	function top5(propertyName) {
+		//to10control.innerHTML = '';	
+		var allCases = [];
+		var oneCase = new Object();
+
+		geojson.eachLayer(function(layer) {
+			//propertyValue = layer.feature.properties[propertyName];
+			propertyValue = (layer.feature.properties[propertyName]*100000)/layer.feature.properties['pop'];
+			//console.log(propertyValue);
+			//allCases.push(propertyValue);
+			oneCase = { 'name': layer.feature.properties['name'], 'cases': Math.floor(propertyValue), 'pop':layer.feature.properties['pop'], 'iso2':layer.feature.properties['cod_ccaa'] };
+			//oneCase = { 'name': layer.feature.properties['name'], 'cases100m': Math.floor(propertyValue), 'pop':layer.feature.properties['pop'] };
+			allCases.push(oneCase);
+		});
+		//console.log(allCases);
+
+		// ALASQL		
+		//var top5 = alasql("SELECT name,cases100m,pop FROM ? allCases ORDER BY cases100m DESC LIMIT 10",[allCases]);
+		var top5 = alasql("SELECT name,cases,pop,iso2 FROM ? allCases WHERE cases > 0  ORDER BY cases DESC LIMIT 5",[allCases]);
+		//var top5 = alasql("SELECT name,cases100m,pop FROM ? allCases WHERE cases100m > 0  ORDER BY cases100m DESC LIMIT 5",[allCases]);	 
+		console.log(top5); 
+		// Definir texto
+		var top5txt = '<h4>TOP 5 PROVINCIAS</h4><img src="img/pixel.png" height="1" width="150"><ul>';
+		for (i = 0; i < top5.length; i++) {
+			//top10txt += '<li>'+ (i+1)+ '. ' + '<img src="https://www.countryflags.io/'+top10[i]['iso2'].toLowerCase()+'/flat/16.png"> ' + top10[i]['name'] + ' '+ top10[i]['cases100m'] + '</li>';
+		  top5txt += '<li>'+ (i+1)+ '. ' + '<img width="30" src="https://raw.githubusercontent.com/josemamira/covid19maps/master/src/img/banderas/ccaa/'+top5[i]['iso2']+'.png"> ' + top5[i]['name'] + ' '+ 
+		  '<button type="button" class="btn btn-primary"> '+ top5[i]['cases'] +' </button></li>';
+		  //top5txt += '<li>'+ (i+1)+ '. ' + top5[i]['name'] + ' '+ top5[i]['cases100m'] + '</li>';
+		}
+				
+		// actualizar 
+		to5control.update( top5txt+'</ul>' );	
+	}
+
+	
+	var start = Date.now();
+
+	url='https://raw.githubusercontent.com/josemamira/covid19maps/master/src/data/ccaa_min.geojson'; 
+	d3.json(url).then( function(data) {	
+		var newCsvArr=[];
+		urlcsv = 'https://raw.githubusercontent.com/josemamira/covid19maps/master/src/data/ccaa_covid19_newcasos_ccaa.csv';
+		d3.csv(urlcsv).then( function(csv) {
+		//d3.csv("data/covid19.csv", function(error, csv) {  /d3.v5
+			var geo = data.features;
+			// Renombrar una columna
+			/*csv = csv.map(function(obj) { 
+				obj['name'] = obj['Country/Region']; // Assign new key 
+				delete obj['Country/Region']; // Delete old key 
+				return obj; 
+			}); */
+			csv.forEach(function(d, i) {
+				//console.log(d); // {codigo: "44", nombre: "Teruel", letra: "TE", 2020-05-08: "0", 2020-05-09: "0", …}
+				keys = Object.keys(d) ;
+				// rellenar el combo quitando los que no son fecha
+				//cols = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );	
+				cols = keys.filter(key => key.indexOf("2020") == 0 && key.substring(0,5)== '2020-');
+				//console.log(cols);	
+				//console.log(cols[cols.length-1]);
+				//lastField = cols[cols.length-1].toString();		
+				$('#datesSel').empty().append('<option selected="selected" value="nothing">(Selecciona una fecha)</option>');
+				cols.forEach(function(col) {
+					//console.log(col);
+					if ( col.substring(0, 5) == '2020-'   ) {	
+						$('#datesSel').append($('<option><option/>').val(col).text(col)); 
+					}
+				});	
+				
+				
+				//************************
+				// Recalcular valores
+				valuesArr = Object.values(d); console.log(valuesArr); // ["28", "Madrid", "M", "13", "18", "19", …]
+				valueArrI = valuesArr.slice(0,2);  //console.log(valueArrI); //["28", "Madrid", "M"]
+				valueArrF = valuesArr.slice(2,-1).map(Number);  //console.log(valueArrF); //["13", "18", "19", "174", "153", …]
+				//var arrayOfNumbers = valueArrF.map(Number);
+				var newValuesArr = [];
+				// Convierte un array de números en un array acumulativo [0,1,3,5,0,10] --> [0,1,4,9,9,19] 
+				// https://stackoverflow.com/questions/10541770/convert-string-array-to-integer-array/21644513
+				valueArrF.reduce(function(a,b,i) { return newValuesArr[i] = a+b; },0); 
+				//console.log(newValuesArr); // [13, 31, 50, 224]
+				var valuesArrOK = valueArrI.concat(newValuesArr);   // Concatenates (joins) el array con los 3 valores iniciales + array recalculado
+
+
+				
+				//console.log(newValues);
+  			    // crear el nuevo array con valores recalculados
+  			    var newCsv = new Object();
+  			    keys.forEach(function(key,i) {
+					newCsv[key] = valuesArrOK[i];					
+				});
+				newCsvArr.push(newCsv);	
+				console.log(newCsvArr);	// {codigo: "28", nombre: "Madrid", letra: "M", 2020-05-08: 13, 2020-05-09: 31,2020-05-10: 50, …}	
+				//**********************************
+				
+				
+				
+				// Join
+				
+				newCsvArr.forEach(function(d, i) {
+					geo.forEach(function(e, j) {
+						if(e.properties.cod_ccaa === d.cod_ccaa) {
+							Object.assign(e.properties, d); // suma a las propiedades del geojson las del csv
+						}
+					})				
+				});
+
+			});
+	
+			geojson = L.geoJson(data, {
+				style: style,
+				onEachFeature: onEachFeature
+			});
+			geojson.addTo(map);
+			//console.log(geojson);
+			console.log('terminado');
+			$('#loader').hide();
+			
+
+		})
+		
+    });//.addTo(map);
+    
+	map.attributionControl.addAttribution('Develop by <a href="https://github.com/josemamira.io/covid19maps">Jose Manuel Mira</a> | '+
+	'Covid-19 data &copy; <a href="https://datos.gob.es/es/catalogo/e05070101-evolucion-de-enfermedad-por-el-coronavirus-covid-19">Datos gobierno España</a>');
+
+	var legend = L.control({position: 'bottomright'});
+	legend.onAdd = function (map) {
+		var div = L.DomUtil.create('div', 'info legend'),
+			//grades = [0, 10, 25, 50, 100, 200, 300, 400, 500],
+			grades =   [0, 25, 50, 100, 250, 500, 1000, 1500, 2000],
+			labels = [];
+
+		// loop through our density intervals and generate a label with a colored square for each interval
+		// first loop for colored legend boxes
+		for (var i = 0; i < grades.length; i++) {
+			div.innerHTML +=
+				'<span style="background:' + getColor(grades[i] + 1) + '"></span> ';
+		}
+
+		// a line break
+		div.innerHTML += '<br>';
+
+		// second loop for text
+		for (var i = 0; i < grades.length; i++) {
+			div.innerHTML +=
+				'<label>' + grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] : '+') + '</label>';
+		}
+		return div;
+	};
+
+	legend.addTo(map);
+
+
+
+</script>
+
+</body>
+</html>
