@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -774,6 +775,7 @@ time.icon:hover, time.icon:focus
 
 		geojson.eachLayer(function(layer) {
 			propertyValue = layer.feature.properties[propertyName];
+			casos100m= (layer.feature.properties[propertyName]*100000)/layer.feature.properties['pop'];
 			//propertyValue = (layer.feature.properties[propertyName]*100000)/layer.feature.properties['pop'];
 			//console.log(propertyValue);
 			//allCases.push(propertyValue);
@@ -807,12 +809,84 @@ time.icon:hover, time.icon:focus
 	var start = Date.now();
 
 	//url='data/munali.geojson'; 
-	url='https://gist.githubusercontent.com/josemamira/ba6811e98859fdf6a734f670207ef1cc/raw/59fb33a131151771ddaf9b5913ea6dc1d7109dcc/cv_municipios.geojson';
+	url='https://raw.githubusercontent.com/josemamira/covid19maps/gh-pages/src/data/cv_municipios.geojson';
+	
 	d3.json(url).then( function(data) {	
-		//urlcsv = 'https://dadesobertes.gva.es/dataset/15810be9-d797-4bf3-b37c-4c922bee8ef8/resource/efdc17b1-ee66-4cdd-b6d0-02d25452a136/download/covid-19-casos-confirmados-por-pcr-casos-pcr-en-los-ultimos-14-dias-y-personas-fallecidas-por-mu.csv';
-		//urlcsv = 'https://gist.githubusercontent.com/josemamira/c9f594b9410b90b8d840a27c74e952c4/raw/d0c84c23a9692cea3e9f59ecc3ca8ae900df3626/cv_covid-19-casos-confirmados-por-pcr-casos-pcr-en-los-ultimos-14-dias-y-personas-fallecidas-por-mu.csv';
-		urlcsv = 'https://gist.githubusercontent.com/josemamira/cde24be6133e7d19551b95e602471529/raw/10033f2dab9faf527ea3527e5ed17071f8ef9454/covidcv.csv';
-		d3.csv(urlcsv).then( function(csv) {
+		console.log(data);
+		//urlcsv = 'https://dadesobertes.gva.es/dataset/15810be9-d797-4bf3-b37c-4c922bee8ef8/resource/d8ecb0f9-0692-424f-97c1-830d6b8f48bf/download/covid-19-casos-confirmados-por-pcr-casos-pcr-en-los-ultimos-14-dias-y-personas-fallecidas-por-mu.csv';
+		
+		
+		// OBTENER EL CSV DE CONSELLERÍA EVITANDO CORS
+		$.ajaxPrefilter(function(options) {
+		  if (options.crossDomain && jQuery.support.cors) {
+			var http = (window.location.protocol === 'http:' ? 'http:' : 'https:');
+			options.url = http + '//cors-anywhere.herokuapp.com/' + options.url;
+			//options.url = "http://cors.corsproxy.io/url=" + options.url;
+		  }
+		});
+
+		var target = 'https://dadesobertes.gva.es/dataset/15810be9-d797-4bf3-b37c-4c922bee8ef8/resource/d8ecb0f9-0692-424f-97c1-830d6b8f48bf/download/covid-19-casos-confirmados-por-pcr-casos-pcr-en-los-ultimos-14-dias-y-personas-fallecidas-por-mu.csv';
+		$.get(target, function(response) {
+			var formateo = d3.dsvFormat(";");
+			var csv = formateo.parse(response);
+			//console.log(csv);
+			// ya tengo el csv
+			// Ahora renombrar algunas columna de string ("3,22") a numeros (3.22)
+			csv.forEach(fila => {
+				//fila.thumb = fila.thumb ? 'server/'+fila.thumb : '';
+				fila['Incidència acumulada PCR+'] = parseFloat( fila['Incidència acumulada PCR+'].replace(',', '.') ) ;
+				fila['Incidència acumulada PCR+14'] = parseFloat( fila['Incidència acumulada PCR+14'].replace(',', '.') ) ;
+				fila['Taxa de defunció'] = parseFloat( fila['Taxa de defunció'].replace(',', '.') ) ;
+			});
+			console.log(csv);
+			
+			
+			
+			
+			//console.log(csv);
+			var geo = data.features;
+			csv.forEach(function(d, i) {
+				keys = Object.keys(d) ;
+				cols = keys.filter( key => key != 'nombre' && key != 'codine' && key != 'CodMunicipio' && key != 'Municipi');         //key => key.indexOf("2020") == 0 && key.substring(0,5)== '2020-');
+				$('#datesSel').empty().append('<option selected="selected" value="nothing">(Seleccionar dato)</option>');
+				cols.forEach(function(col) {
+					$('#datesSel').append($('<option><option/>').val(col).text(col)); 
+				});	
+				
+				// Join entre tablas por key codigo
+				geo.forEach(function(e, j) {
+					// observación: e es el geojson, d el CSV, e.properties.CodMunicipio es un entero ej 3014, d.CodMunicipio es un texto ej "0304"
+					// por eso igualamos con parseInt
+					if(e.properties.CodMunicipio === parseInt(d.CodMunicipio) ) {
+						Object.assign(e.properties, d); // suma a las propiedades del geojson las del csv
+					}
+				})
+			});
+	
+			geojson = L.geoJson(data, {
+				style: style,
+				onEachFeature: onEachFeature
+			});
+			geojson.addTo(map);
+			//console.log(geojson);		
+			console.log('terminado');
+			$('#loader').hide();			
+			
+
+		  }
+		);
+		
+
+
+		
+		/*
+		urlcsv = 'https://raw.githubusercontent.com/josemamira/covid19maps/gh-pages/src/data/covid-19-casos-confirmados-por-pcr-casos-pcr-en-los-ultimos-14-dias-y-personas-fallecidas-por-mu.csv';
+		//urlcsv = 'https://gist.githubusercontent.com/josemamira/cde24be6133e7d19551b95e602471529/raw/10033f2dab9faf527ea3527e5ed17071f8ef9454/covidcv.csv';
+		//d3.dsv(';')(urlcsv, function(error, data){
+		//d3.dsv(';')(urlcsv, function(error, data){
+		d3.dsv(";", urlcsv).then(function(csv) {	
+		//d3.csv(urlcsv).then( function(csv) {
+			console.log(csv);
 		//d3.csv("data/covid19.csv", function(error, csv) {  /d3.v5
 			var geo = data.features;
 
@@ -836,8 +910,14 @@ time.icon:hover, time.icon:focus
 				
 				// Join entre tablas por key codigo
 				geo.forEach(function(e, j) {
-					//if(e.properties.CodMunicipio === d.CodMunicipio ) {
-					if(e.properties.codine === d.codine ) {
+					// observación:
+					// e es el geojson
+					// d el CSV
+					// e.properties.CodMunicipio es un entero ej 3014
+					// d.CodMunicipio es un texto ej "0304"
+					// por eso igualamos con parseInt
+					if(e.properties.CodMunicipio === parseInt(d.CodMunicipio) ) {
+					//if(e.properties.codine === d.codine ) {
 						//console.log('coinciden');
 						//e.properties= d;
 						Object.assign(e.properties, d); // suma a las propiedades del geojson las del csv
@@ -855,7 +935,7 @@ time.icon:hover, time.icon:focus
 			$('#loader').hide();
 			
 
-		})
+		})*/
 		
     });//.addTo(map);
     
