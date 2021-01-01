@@ -357,10 +357,16 @@ tr:nth-child(even) { background: #EEE; }
 
 
 		lastDate = keys[keys.length - 1];
-		this._div.innerHTML = '<center><h4>ORIGEN DE LOS EXTRANJEROS</h4></center>' +  (props ?
-			'<strong>'+props.nombre +'</strong>   Total casos covid: ' + parseInt(props['Casos PCR+']) + ' poblacion '+ parseInt(props['pop'])+
-			' ('+ Number(parseInt(props['Casos PCR+'])*100000/parseInt(props['pop'])).toFixed(1) +' %)<br>'+
-			'<div id="chart"></div>'
+		this._div.innerHTML = '<center><h4>DATOS DEL MUNICIPIO</h4></center>' +  (props ?
+			'<table>'+
+			'<tr><td>Municipio</td><td><strong>'+props.nombre+'</strong></td></tr>'+
+			'<tr><td>Poblaciò</td><td>'+parseInt(props['pop'])+'</td></tr>'+		
+			'<tr><td>Casos PCR+</td><td>'+parseInt(props['Casos PCR+'])+'</td></tr>'+
+			'<tr><td>Incidència acumulada PCR+</td><td>'+parseInt(props['Incidència acumulada PCR+'])+'</td></tr>'+		
+			'<tr><td>Casos PCR+ 14 dies</td><td>'+parseInt(props['Casos PCR+ 14 dies'])+'</td></tr>'+		
+			'<tr><td>Incidència acumulada PCR+14</td><td>'+parseInt(props['Incidència acumulada PCR+14'])+'</td></tr>'+
+			'<tr><td>Defuncions</td><td>'+parseInt(props['Defuncions'])+'</td></tr>'+		
+			'<tr><td>Taxa de defunció</td><td>'+parseInt(props['Taxa de defunció'])+'</td></tr></table>'	
 			: '+ Info: Rat&oacute;n encima de cada municipio');
 		//chart(values);
 
