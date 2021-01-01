@@ -1,10 +1,11 @@
 
 
+
 <!DOCTYPE html>
 <html>
 <head>
 	
-	<title>Origen de los extranjeros en la provincia de Alicante</title>
+	<title>COVID19 en la Comunidad Valenciana (municipios)</title>
 
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,6 +37,8 @@
 	<!-- simple-statistics -->
 	<script src='https://unpkg.com/simple-statistics@7.3.0/dist/simple-statistics.min.js'></script>
 	<script src='js/ckmeans_simple_statistics.js'></script>
+	<!-- turf -->
+	<script src="js/turf.min.js"></script>
 
 <style>
 body {
@@ -189,7 +192,14 @@ time.icon:hover, time.icon:focus
 /* fin fecha */
 
 
+/* https://stackoverflow.com/questions/14834198/table-scroll-with-html-and-css */
+/* scrolltable rules */
+table  { margin-top:  20px; display: inline-block; overflow: auto; }
+th div { margin-top: -20px; position: absolute; }
 
+/* design */
+table { border-collapse: collapse; }
+tr:nth-child(even) { background: #EEE; }
 
 
 
@@ -767,8 +777,35 @@ time.icon:hover, time.icon:focus
 	};	
 	to5control.addTo(map);
 
+
+
+
 	// Cambiar top5 en función de la fecha seleccionada
 	function top5(propertyName) {
+		var allCases = [];
+		var oneCase = new Object();
+		geojson.eachLayer(function(layer) {
+			propertyValue = layer.feature.properties[propertyName];
+			var poligono = layer.feature.geometry;
+			var centroid = turf.centroid(poligono);
+			var bbox = turf.bbox(poligono); //console.log(bbox);
+			oneCase = { 'name': layer.feature.properties['municipio'], 'cases': Math.floor(propertyValue), 'pop':Math.floor(layer.feature.properties['Total población']), 'iso2':layer.feature.properties['codine'], 'bbox': bbox };
+			allCases.push(oneCase);
+		});
+		// ALASQL		
+		var top5 = alasql("SELECT DISTINCT name,cases,pop,iso2,bbox FROM ? allCases WHERE cases > 0  GROUP BY name,cases,pop,iso2,bbox ORDER BY cases DESC",[allCases]);
+		console.log(top5); 
+		var top5txt = '<h4>TABLA: '+propertyName+'</h4><table style="height: 150px"><tr>  <th><div>#</div>  <th><div>MUNICIPIO</div> <th><div>Valor</div>';
+		for (i = 0; i < top5.length; i++) {
+		  top5txt += '<tr> <td>'+ (i+1)+ ' </a><td><a href="#" onclick="map.fitBounds([['+top5[i]['bbox'][1]+','+top5[i]['bbox'][0] +'],['+top5[i]['bbox'][3] +','+ top5[i]['bbox'][2] +']]);">'+ top5[i]['name']+ ' </a><td>'+ top5[i]['cases'] +'';  
+		}				
+		// actualizar 
+		to5control.update( top5txt+'</table>' );	
+	}
+
+
+	// Cambiar top5 en función de la fecha seleccionada
+	function top5kk(propertyName) {
 		//to10control.innerHTML = '';	
 		var allCases = [];
 		var oneCase = new Object();
