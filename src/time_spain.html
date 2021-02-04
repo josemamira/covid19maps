@@ -355,8 +355,8 @@ time.icon:hover, time.icon:focus
 		//console.log(keys)
 		// filtrado para quedarse solo con keys de fecha
 		//keys = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );
-		keys = keys.filter(key => key.indexOf("2020",0) == 0 && key.substring(0,5) == '2020-');
-		
+		//keys = keys.filter(key => key.indexOf("2020",0) == 0 && key.substring(0,5) == '2020-');
+		keys = keys.filter(key => key.indexOf("202",0) == 0 && key.substring(0,3) == '202');		
 		//console.log(keys);
 		// obtener un array de valores de las fechas
 		values =[]
@@ -587,14 +587,16 @@ time.icon:hover, time.icon:focus
 				keys = Object.keys(d) ;
 				// rellenar el combo quitando los que no son fecha
 				//cols = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );	
-				cols = keys.filter(key => key.indexOf("2020") == 0 && key.substring(0,5)== '2020-');
+				//cols = keys.filter(key => key.indexOf("2020") == 0 && key.substring(0,5)== '2020-');
+				cols = keys.filter(key => key.indexOf("202") == 0 && key.substring(0,3)== '202');
+
 				//console.log(cols);	
 				//console.log(cols[cols.length-1]);
 				//lastField = cols[cols.length-1].toString();		
 				$('#datesSel').empty().append('<option selected="selected" value="nothing">(Selecciona una fecha)</option>');
 				cols.forEach(function(col) {
 					//console.log(col);
-					if ( col.substring(0, 5) == '2020-'   ) {	
+					if ( col.substring(0, 3) == '202'   ) {	
 						$('#datesSel').append($('<option><option/>').val(col).text(col)); 
 					}
 				});	
