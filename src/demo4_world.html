@@ -370,10 +370,12 @@ function chart(d) {
 				//console.log(d);
 				keys = Object.keys(d) ;
 				// rellenar el combo quitando los que no son fecha
-				cols = keys.filter(key => key.substring(key.length - 3, key.length -1) == '/2'   );				
+				//cols = keys.filter(key => key.substring(key.length - 3, key.length -1) == '/2'   );	
+				cols = keys.filter(key => key.substring(key.length - 3, key.length).substring(0, 2) == '/2'   );			
 				$('#datesSel').empty().append('<option selected="selected" value="nothing">(Select a date)</option>');
 				cols.forEach(function(col) {
-					if ( col.substring(col.length - 3, col.length -1) == '/2'   ) {	
+					if ( col.substring(col.length - 3, col.length).substring(0, 2) == '/2'   ) {
+					//if ( col.substring(col.length - 3, col.length -1) == '/2'   ) {	
 						$('#datesSel').append($('<option><option/>').val(col).text(col)); 
 					}
 				});				
