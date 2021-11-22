@@ -108,7 +108,8 @@ html, body, #map {
 		//console.log( Object.entries(obj) );
 		var keys = Object.keys(obj);
 		// filtrado para quedarse solo con keys de fecha
-		keys = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );
+		//keys = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );
+		keys = keys.filter(key => key.substring(key.length - 3, key.length).substring(0, 2) == '/2'   );
 		// obtener un array de valores de las fechas
 		values =[]
 		for (var i = 0; i < keys.length; i++) {
@@ -323,7 +324,7 @@ function chart(d) {
 		geojson.eachLayer(function(layer) {
 			propertyValue = layer.feature.properties[propertyName];
 			propertyValue = (layer.feature.properties[propertyName]*1000)/layer.feature.properties['pop'];
-			console.log(propertyValue);
+			//console.log(propertyValue);
 
 			// Your function that determines a fill color for a particular
 			// property name and value.
@@ -372,10 +373,11 @@ function chart(d) {
 				//console.log(d);
 				keys = Object.keys(d) ;
 				// rellenar el combo quitando los que no son fecha
-				cols = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );				
+				cols = keys.filter(key => key.substring(key.length - 3, key.length).substring(0, 2) == '/2'   );
+				//cols = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );				
 				$('#datesSel').empty().append('<option selected="selected" value="nothing">(Select a date)</option>');
 				cols.forEach(function(col) {
-					if ( col.substring(col.length - 3, col.length) == '/20'   ) {	
+					if ( col.substring(col.length - 3, col.length).substring(0, 2) == '/2'   ) {	
 						$('#datesSel').append($('<option><option/>').val(col).text(col)); 
 					}
 				});				
