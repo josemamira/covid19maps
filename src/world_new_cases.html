@@ -300,7 +300,7 @@ time.icon:hover, time.icon:focus
 		obj = Object(props);
 		var keys = Object.keys(obj);
 		// filtrado para quedarse solo con keys de fecha
-		keys = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );
+		keys = keys.filter(key => key.substring(key.length - 3, key.length).substring(0, 2) == '/2'   );
 		// obtener un array de valores de las fechas
 		values =[]
 		for (var i = 0; i < keys.length; i++) {
@@ -479,7 +479,9 @@ time.icon:hover, time.icon:focus
 		// Definir texto
 		var top10txt = '<h4>TOP 10 COUNTRIES</h4><img src="img/pixel.png" height="1" width="150"><ul>';
 		for (i = 0; i < top10.length; i++) {
-		  top10txt += '<li>'+ (i+1)+ '. ' + '<img src="https://www.countryflags.io/'+top10[i]['iso2'].toLowerCase()+'/flat/16.png"> ' + top10[i]['name'] + ' '+ top10[i]['newcases'] + '</li>';
+		  // NO FUNCIONA WEB CAIDA top10txt += '<li>'+ (i+1)+ '. ' + '<img src="https://www.countryflags.io/'+top10[i]['iso2'].toLowerCase()+'/flat/16.png"> ' + top10[i]['name'] + ' '+ top10[i]['newcases'] + '</li>';
+		  // https://raw.githubusercontent.com/hampusborgos/country-flags/main/png100px/ae.png
+		  top10txt += '<li>'+ (i+1)+ '. ' + '<img width="16" src="https://raw.githubusercontent.com/hampusborgos/country-flags/main/png100px/'+top10[i]['iso2'].toLowerCase()+'.png"> ' + top10[i]['name'] + ' '+ top10[i]['newcases'] + '</li>';
 		}
 				
 		// actualizar 
@@ -498,12 +500,12 @@ time.icon:hover, time.icon:focus
 			csv.forEach(function(d, i) {		
 				keys = Object.keys(d) ;
 				// rellenar el combo quitando los que no son fecha
-				cols = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );
+				cols = keys.filter(key => key.substring(key.length - 3, key.length).substring(0, 2) == '/2'   );
 			
 				// Rellenar el combo con fechas		
 				$('#datesSel').empty().append('<option selected="selected" value="nothing">(Select a date)</option>');
 				cols.forEach(function(col) {
-					if ( col.substring(col.length - 3, col.length) == '/20'   ) {	
+					if ( col.substring(col.length - 3, col.length).substring(0, 2) == '/2'   ) {	
 						$('#datesSel').append($('<option><option/>').val(col).text(col)); 
 					}
 				});					
