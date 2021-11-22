@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,7 +14,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
     <script src="js/jquery-3.2.1.min.js"></script>
-       <script src="js/d3.v5.js" charset="utf-8"></script>
+    <script src="js/d3.v5.js" charset="utf-8"></script>
     <!-- control -->
 	<script src="js/Leaflet.Control.Custom.js"></script>
 
@@ -107,7 +108,8 @@ html, body, #map {
 		//console.log( Object.entries(obj) );
 		var keys = Object.keys(obj);
 		// filtrado para quedarse solo con keys de fecha
-		keys = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );
+		//keys = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );
+		keys = keys.filter(key => key.substring(key.length - 3, key.length).substring(0, 2) == '/2'   );
 		// obtener un array de valores de las fechas
 		values =[]
 		for (var i = 0; i < keys.length; i++) {
@@ -123,7 +125,7 @@ html, body, #map {
 
 		lastDate = keys[keys.length - 1];
 		this._div.innerHTML = '<h4>COVID-19</h4>' +  (props ?
-			props.name +' deaths every 1 millon people:<strong> ' + (((Number(props[lastDate]))*1000000)/props.pop).toFixed(2) + '</strong><br>'+
+			props.name +' cases every 1000 people:<strong> ' + (((Number(props[lastDate]))*1000)/props.pop).toFixed(2) + '</strong><br>'+
 			'<div id="chart"></div>'
 			: 'Hover over a country');
 		//chart(values);
@@ -259,15 +261,15 @@ function chart(d) {
 	
 	// get color depending on population density value
 	function getColor(d) {
-		return  d > 30000 ? '#800026' :
-				d > 20000  ? '#BD0026' :
-				d > 10000  ? '#E31A1C' :
-				d > 5000  ? '#FC4E2A' :
-				d > 2500   ? '#FD8D3C' :
-				d > 1000   ? '#FEB24C' :
-				d > 500   ? '#FED976' :
+		return d > 4 ? '#800026' :
+				d > 3  ? '#BD0026' :
+				d > 2  ? '#E31A1C' :
+				d > 1  ? '#FC4E2A' :
+				d > 0.5   ? '#FD8D3C' :
+				d > 0.25   ? '#FEB24C' :
+				d > 0.1   ? '#FED976' :
 							'#FFEDA0';
-	} //100, 500, 1000, 2500, 5000, 10000, 20000, 30000
+	}
 
 	function style(feature) {
 		return {
@@ -321,6 +323,8 @@ function chart(d) {
 
 		geojson.eachLayer(function(layer) {
 			propertyValue = layer.feature.properties[propertyName];
+			propertyValue = (layer.feature.properties[propertyName]*1000)/layer.feature.properties['pop'];
+			//console.log(propertyValue);
 
 			// Your function that determines a fill color for a particular
 			// property name and value.
@@ -354,7 +358,7 @@ function chart(d) {
 	url='data/countries_data.geojson'; 
 	d3.json(url).then( function(data) {		 
 	//d3.json(url, function(error, data) { // d3.v3
-		urlcsv = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv';
+		urlcsv = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv';
 		d3.csv(urlcsv).then( function(csv) {
 		//d3.csv("data/covid19.csv", function(error, csv) {  /d3.v5
 			var world = data.features;
@@ -369,10 +373,11 @@ function chart(d) {
 				//console.log(d);
 				keys = Object.keys(d) ;
 				// rellenar el combo quitando los que no son fecha
-				cols = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );				
+				cols = keys.filter(key => key.substring(key.length - 3, key.length).substring(0, 2) == '/2'   );
+				//cols = keys.filter(key => key.substring(key.length - 3, key.length) == '/20'   );				
 				$('#datesSel').empty().append('<option selected="selected" value="nothing">(Select a date)</option>');
 				cols.forEach(function(col) {
-					if ( col.substring(col.length - 3, col.length) == '/20'   ) {	
+					if ( col.substring(col.length - 3, col.length).substring(0, 2) == '/2'   ) {	
 						$('#datesSel').append($('<option><option/>').val(col).text(col)); 
 					}
 				});				
@@ -398,14 +403,14 @@ function chart(d) {
 		
     });//.addTo(map);
     
-	map.attributionControl.addAttribution('Covid-19 data &copy; <a href="https://github.com/CSSEGISandData">CSSE at Johns Hopkins University</a>');
+	map.attributionControl.addAttribution('Develop by <a href="https://github.com/josemamira.io/covid19maps">Jose Manuel Mira</a> | Covid-19 data &copy; <a href="https://github.com/CSSEGISandData">CSSE at Johns Hopkins University</a>');
 
 	var legend = L.control({position: 'bottomright'});
 
 	legend.onAdd = function (map) {
 
 		var div = L.DomUtil.create('div', 'info legend'),
-			grades = [0, 500, 1000, 2500, 5000, 10000, 20000, 30000],
+			grades = [0, 0,1, 0.25, 0.5, 1, 2, 3, 4],
 			labels = [],
 			from, to;
 
@@ -418,37 +423,12 @@ function chart(d) {
 				from + (to ? '&ndash;' + to : '+'));
 		}
 
-		div.innerHTML = labels.join('<br>');
+		div.innerHTML = '<p>Cases per 1000 people</p>'+labels.join('<br>');
 		return div;
 	};
 
 	legend.addTo(map);
 
-function merge(arr1, arr2, prop1, prop2) {
-    return arr1.map(function(item){
-        var p = item[prop1];
-        el = arr2.filter(function(item) {
-            return item[prop2] === p;
-        });
-        if (el.length === 0) {
-            return null;
-        }
-        var res = {};
-        for (var i in item) {
-            if (i !== prop1) {
-                res[i] = item[i];
-            }
-        }
-        for (var i in el[0]) {
-            if (i !== prop2) {
-                res[i] = el[0][i];
-            }
-        }
-        return res;
-    }).filter(function(el){
-        return el !== null;
-    });
-}
 
 
 
