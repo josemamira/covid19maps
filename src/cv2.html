@@ -938,6 +938,7 @@ fetchJsonp(urlDOSearch)
     .then(function(response) {
         return response.json()
     }).then(function(json) {
+		console.log(JSON.stringify(json));
         //console.log(json.result.results);
         //console.log(json.result.results[0].resources );
         datos = json.result.results[0].resources;
