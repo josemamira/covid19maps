@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -600,7 +597,22 @@ tr:nth-child(even) { background: #EEE; }
 	function onMapClick(e) {
 		console.log(e);
 		console.log(e.sourceTarget.feature.properties['Municipi'] + ': '+ e.sourceTarget.feature.properties['Casos PCR+']);
-		var contenido = e.sourceTarget.feature.properties['Municipi'] + ': '+ e.sourceTarget.feature.properties['Casos PCR+'];
+		//var contenido = e.sourceTarget.feature.properties['Municipi'] + ': '+ e.sourceTarget.feature.properties['Casos PCR+'];
+		
+		var contenido = '<table>'+
+			'<tr><td colspan="2"><h4><strong>'+e.sourceTarget.feature.properties['nombre']+'</strong></h4></td></tr>'+
+			'<tr><td>Poblaciò</td><td>'+parseInt( e.sourceTarget.feature.properties['pop'])+'</td></tr>'+		
+			'<tr><td>Casos PCR+</td><td>'+parseInt( e.sourceTarget.feature.properties['Casos PCR+'] )+'</td></tr>'+
+			'<tr><td>Incidència acumulada PCR+</td><td>'+parseInt(  e.sourceTarget.feature.properties['Incidència acumulada PCR+'] )+'</td></tr>'+		
+			'<tr><td>Casos PCR+ 14 dies</td><td>'+parseInt( e.sourceTarget.feature.properties['Casos PCR+ 14 dies'])+'</td></tr>'+		
+			'<tr><td>Incidència acumulada PCR+14</td><td>'+parseInt(  e.sourceTarget.feature.properties['Incidència acumulada PCR+14'] )+'</td></tr>'+
+			'<tr><td>Defuncions</td><td>'+parseInt( e.sourceTarget.feature.properties['Defuncions'] )+'</td></tr>'+		
+			'<tr><td>Taxa de defunció</td><td>'+parseInt( e.sourceTarget.feature.properties['Taxa de defunció'] )+'</td></tr></table>';
+		
+		
+		
+		
+		
 		popup
 			.setLatLng(e.latlng)
 			//.setContent("You clicked the map at " + e.latlng.toString())
