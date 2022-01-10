@@ -868,11 +868,12 @@ tr:nth-child(even) { background: #EEE; }
 	var start = Date.now();
 
 	//url='data/munali.geojson'; 
+	recurso = 'f4864e40-5268-459b-94fc-20318a7a246d';
 	url='https://raw.githubusercontent.com/josemamira/covid19maps/master/src/data/cv_municipios.geojson';	
 	//url='https://gist.githubusercontent.com/josemamira/ba6811e98859fdf6a734f670207ef1cc/raw/59fb33a131151771ddaf9b5913ea6dc1d7109dcc/cv_municipios.geojson';
 
 	// https://dadesobertes.gva.es/dataset/38e6d3ac-fd77-413e-be72-aed7fa6f13c2/resource/e4898a9c-27ae-44d0-b65a-5fe7a918c297/download/covid-19-casos-confirmados-por-pcr-casos-pcr-en-los-ultimos-14-dias-y-personas-fallecidas-por-mu.csv
-	var urlGVA = 'https://dadesobertes.gva.es/api/3/action/datastore_search?resource_id=e4898a9c-27ae-44d0-b65a-5fe7a918c297' +'&limit=542';
+	var urlGVA = 'https://dadesobertes.gva.es/api/3/action/datastore_search?resource_id='+recurso+'&limit=542';
 	fetchJsonp(urlGVA)
 	.then(function(response) {
 		return response.json()
