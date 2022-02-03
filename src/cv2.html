@@ -255,7 +255,7 @@ var positronLabels = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_only_la
 // Form Select itemsSel 
 L.control.custom({
     position: 'topleft',
-    content: '<div class="input-group">' +
+    content: '<div class="input-group" id="propSelDiv" style="visibility:hidden">' +
         '<label for="exampleFormControlSelect1">Selecciona un dato: </label>' +
         '<select class="form-control" id="itemsSel"><option>SELECCIONA UN DATO</option></select>' +
         '<button type="button" id="playVideo" class="btn btn-default">' +
@@ -275,7 +275,7 @@ L.control.custom({
 // Form Select datesSel 
 L.control.custom({
     position: 'topleft',
-    content: '<div class="input-group">' +
+    content: '<div class="input-group" >' +
         '<label for="exampleFormControlSelect1">Selecciona ua fecha: </label>' +
         '<select class="form-control" id="datesSel"><option>SELECCIONA UNA FECHA</option></select>' +
         '<div id="labDate"></div>' +
@@ -321,6 +321,7 @@ $('#itemsSel').on('change', function() {
 
 $('#datesSel').on('change', function() {
     //alert(this.value); // Devuelve el id del api del portal  Dades Obertes
+    document.getElementById('propSelDiv').style.visibility = 'visible';
 
 
     // Meter el codigo de carga geojson
