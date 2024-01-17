@@ -339,7 +339,7 @@ function chart(d) {
 	d3.json(url).then( function(data) {	
 		//console.log(data);	 
 		//urlcsv = 'data/ccaa_covid19_casos.csv'; // local
-		urlcsv = 'https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_casos.csv';
+		urlcsv = 'https://raw.githubusercontent.com/josemamira/covid19maps/gh-pages/src/data/ccaa_covid19_casos.csv';
 		d3.csv(urlcsv).then( function(csv) {
 			var ccaa = data.features;
 
