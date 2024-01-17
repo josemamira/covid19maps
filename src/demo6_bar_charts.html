@@ -111,7 +111,7 @@
 
 
 <script>
-d3.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_altas.csv").then(function(data) {	
+d3.csv("https://raw.githubusercontent.com/josemamira/covid19maps/gh-pages/src/data/ccaa_covid19_altas.csv").then(function(data) {	
     //a = allData[0];
     var ccaas = alasql("SELECT cod_ine,CCAA FROM ? data",[data]);
     for (var i = 0; i < ccaas.length; i++) {
