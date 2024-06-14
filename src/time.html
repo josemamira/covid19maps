@@ -523,7 +523,8 @@ time.icon:hover, time.icon:focus
 		// Definir texto
 		var top10txt = '<h4>TOP 10 COUNTRIES</h4><img src="img/pixel.png" height="1" width="150"><ul>';
 		for (i = 0; i < top10.length; i++) {
-		  top10txt += '<li>'+ (i+1)+ '. ' + '<img src="https://www.countryflags.io/'+top10[i]['iso2'].toLowerCase()+'/flat/16.png"> ' + top10[i]['name'] + ' '+ top10[i]['cases100m'] + '</li>';
+		  top10txt += '<li>'+ (i+1)+ '. ' + '<img width="16" src="https://www.worldometers.info/img/flags/small/tn_'+top10[i]['iso2'].toLowerCase()+'-flag.gif"> ' + top10[i]['name'] + ' '+ top10[i]['cases100m'] + '</li>';
+		  //top10txt += '<li>'+ (i+1)+ '. ' + '<img src="https://www.countryflags.io/'+top10[i]['iso2'].toLowerCase()+'/flat/16.png"> ' + top10[i]['name'] + ' '+ top10[i]['cases100m'] + '</li>';
 		}
 				
 		// actualizar 
